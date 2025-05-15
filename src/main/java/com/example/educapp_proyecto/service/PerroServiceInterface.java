@@ -10,4 +10,5 @@ public interface PerroServiceInterface {
     Perro findById(Long id);
     Perro save(Perro entity);
     void deleteById(Long id);
+    Perro updatePerro(Long id, Perro perro);
 }

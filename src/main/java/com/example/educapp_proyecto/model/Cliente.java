@@ -1,5 +1,7 @@
 package com.example.educapp_proyecto.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -25,8 +27,10 @@ public class Cliente {
 
     @ManyToOne
     @JoinColumn(name = "educador_id")
+    @JsonBackReference
     private Educador educador;
 
     @OneToMany(mappedBy = "cliente")
+    @JsonIgnore
     private List<Perro> perros;
 }

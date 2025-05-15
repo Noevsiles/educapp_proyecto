@@ -1,5 +1,7 @@
 package com.example.educapp_proyecto.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,11 +30,15 @@ public class Educador {
     private String descripcion;
 
     @OneToMany(mappedBy = "educador")
+    @JsonIgnore
+    @JsonManagedReference
     private List<Cliente> clientes;
 
     @OneToMany(mappedBy = "educador")
+    @JsonIgnore
     private List<Tarifa> tarifas;
 
     @OneToMany(mappedBy = "educador")
+    @JsonIgnore
     private List<Sesion> sesiones;
 }

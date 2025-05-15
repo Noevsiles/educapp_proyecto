@@ -1,7 +1,11 @@
 package com.example.educapp_proyecto.service.impl;
 
+import com.example.educapp_proyecto.dto.ClienteRequestDto;
+import com.example.educapp_proyecto.dto.ClienteResponseDto;
 import com.example.educapp_proyecto.model.Cliente;
+import com.example.educapp_proyecto.model.Educador;
 import com.example.educapp_proyecto.repository.ClienteRepository;
+import com.example.educapp_proyecto.repository.EducadorRepository;
 import com.example.educapp_proyecto.service.ClienteServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +17,9 @@ import java.util.Optional;
 public class ClienteService implements ClienteServiceInterface {
     @Autowired
     private ClienteRepository clienteRepository;
+
+    @Autowired
+    private EducadorRepository educadorRepository;
 
     @Override
     public List<Cliente> findAll() {
@@ -51,5 +58,30 @@ public class ClienteService implements ClienteServiceInterface {
         } else {
             throw new RuntimeException("Cliente no encontrado con el id: " + id);
         }
+    }
+
+    @Override
+    public ClienteResponseDto crearClienteDesdeDto(ClienteRequestDto dto) {
+        Educador educador = educadorRepository.findById(dto.getEducadorId())
+                .orElseThrow(() -> new RuntimeException("Educador no encontrado con id: " + dto.getEducadorId()));
+
+        Cliente cliente = new Cliente();
+        cliente.setNombre(dto.getNombre());
+        cliente.setApellidos(dto.getApellidos());
+        cliente.setEmail(dto.getEmail());
+        cliente.setTelefono(dto.getTelefono());
+        cliente.setEducador(educador);
+
+        Cliente guardado = clienteRepository.save(cliente);
+
+        ClienteResponseDto response = new ClienteResponseDto();
+        response.setId(guardado.getIdCliente());
+        response.setNombre(guardado.getNombre());
+        response.setApellidos(guardado.getApellidos());
+        response.setEmail(guardado.getEmail());
+        response.setTelefono(guardado.getTelefono());
+        response.setNombreEducador(educador.getNombre());
+
+        return response;
     }
 }

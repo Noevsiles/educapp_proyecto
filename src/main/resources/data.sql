@@ -1,4 +1,3 @@
-
 -- 1) CAUSAS
 INSERT IGNORE INTO causa (id_causa, nombre, descripcion)
 VALUES (1, 'Ansiedad', 'Estado de tensión frente a ausencia de estímulo o presencia de amenaza.'),
@@ -25,7 +24,7 @@ VALUES (1, 'Ansiedad', 'Estado de tensión frente a ausencia de estímulo o pres
 
 -- 2) SOLUCIONES
 INSERT IGNORE INTO solucion (id_solucion, nombre, descripcion,
-                      categoria, dificultad, requerimientos, notas)
+                             categoria, dificultad, requerimientos, notas)
 VALUES (1, 'Redirección de atención mediante comandos',
         'Uso de comandos para desviar la atención del perro de estímulos desencadenantes.',
         'Técnicas de refuerzo positivo', 'Fácil', 'Clicker, Premios', 'Evitar métodos aversivos.'),
@@ -272,3 +271,93 @@ VALUES (1, 1),
        (15, 32),
        (15, 36),
        (15, 37);
+
+-- EDUCADORES
+INSERT IGNORE INTO educador (id_educador, nombre, apellidos, email, telefono, especializacion, experiencia, formacion, descripcion)
+VALUES (1, 'Laura', 'Martínez', 'laura@adiestra.com', '666111222', 'Obediencia básica', 5, 'Técnico en adiestramiento canino', 'Especializada en modificación de conducta');
+
+-- CLIENTES
+INSERT IGNORE INTO cliente (id_cliente, nombre, apellidos, email, telefono, educador_id)
+VALUES (1, 'Carlos', 'Pérez', 'carlos@cliente.com', '666333444', 1);
+
+-- ACTIVIDADES
+INSERT IGNORE INTO actividad (id_actividad, nombre, descripcion, duracion, solucion_aplicada_id, completado)
+VALUES
+    (1, 'Ejercicio de quieto', 'El perro debe permanecer quieto durante 10 segundos.', 10, 1, false),
+    (2, 'Caminar junto', 'Paseo con correa corta sin tirar.', 15, 2, false);
+
+-- 6) PLAN_TRABAJO
+INSERT IGNORE INTO plan_trabajo (id, cliente_id, observaciones)
+VALUES (1, 1, 'Plan personalizado para reducir ladridos y mejorar la conducta en casa');
+
+-- 7) PLAN_TRABAJO_PROBLEMAS (relación con problemas de conducta)
+INSERT IGNORE INTO plan_trabajo_problemas (plan_trabajo_id, problemas_id)
+VALUES (1, 1), -- Ladrido excesivo
+       (1, 2); -- Mordisqueo
+
+-- 8) PLAN_TRABAJO_ACTIVIDADES (relación con actividades existentes)
+INSERT IGNORE INTO plan_trabajo_actividades (plan_trabajo_id, actividades_id)
+VALUES (1, 1), -- Actividad 1
+       (1, 2); -- Actividad 2
+
+-- EDUCADORES
+INSERT INTO educador (nombre, apellidos, email, telefono, especializacion, experiencia, formacion, descripcion) VALUES
+                                                                                                                    ('Laura', 'Vega', 'laura@educapp.com', '600111222', 'Obediencia', 5, 'Psicología canina', 'Especialista en obediencia'),
+                                                                                                                    ('Miguel', 'Santos', 'miguel@educapp.com', '600222333', 'Agresividad', 7, 'Etología clínica', 'Experto en casos complejos'),
+                                                                                                                    ('Carmen', 'López', 'carmen@educapp.com', '600333444', 'Miedos', 6, 'Educadora certificada', 'Terapias de exposición'),
+                                                                                                                    ('Pedro', 'Ruiz', 'pedro@educapp.com', '600444555', 'Socialización', 4, 'Adiestramiento positivo', 'Especialista en grupos'),
+                                                                                                                    ('Ana', 'Martínez', 'ana@educapp.com', '600555666', 'Cachorros', 3, 'Clicker training', 'Trabaja con primeras etapas'),
+                                                                                                                    ('Sofía', 'Gómez', 'sofia@educapp.com', '600666777', 'Ansiedad', 8, 'Comportamiento animal', 'Enfoque emocional');
+
+-- CLIENTES
+INSERT INTO cliente (nombre, apellidos, email, telefono, educador_id) VALUES
+                                                                          ('Carlos', 'Fernández', 'carlos@cliente.com', '612345678', 1),
+                                                                          ('Elena', 'García', 'elena@cliente.com', '612345679', 2),
+                                                                          ('Raúl', 'Hernández', 'raul@cliente.com', '612345680', 3),
+                                                                          ('Sandra', 'López', 'sandra@cliente.com', '612345681', 4),
+                                                                          ('Iván', 'Pérez', 'ivan@cliente.com', '612345682', 5),
+                                                                          ('Lucía', 'Ramírez', 'lucia@cliente.com', '612345683', 6);
+
+-- PERROS
+INSERT INTO perro (nombre, raza, sexo, edad, esterilizado, cliente_id) VALUES
+                                                                           ('Rex', 'Labrador', 'M', 3, true, 1),
+                                                                           ('Luna', 'Golden Retriever', 'H', 2, false, 2),
+                                                                           ('Max', 'Pastor Alemán', 'M', 4, true, 3),
+                                                                           ('Nala', 'Border Collie', 'H', 1, false, 4),
+                                                                           ('Rocky', 'Beagle', 'M', 5, true, 5),
+                                                                           ('Kira', 'Bulldog Francés', 'H', 2, true, 6);
+
+-- PLANES DE TRABAJO
+INSERT INTO plan_trabajo (observaciones, cliente_id) VALUES
+                                                         ('Control de ansiedad y paseos', 1),
+                                                         ('Reforzar obediencia', 2),
+                                                         ('Mejorar sociabilidad', 3),
+                                                         ('Plan para problemas de correa', 4),
+                                                         ('Reducción de miedo a sonidos', 5),
+                                                         ('Entrenamiento de calma', 6);
+
+-- ACTIVIDADES
+INSERT INTO actividad (nombre, descripcion, duracion, completado) VALUES
+                                                                      ('Sentado y quieto', 'Obediencia básica en casa', 15, false),
+                                                                      ('Caminar junto', 'Control de correa', 20, false),
+                                                                      ('Juego interactivo', 'Estimulación mental', 30, false),
+                                                                      ('Trabajo de olfato', 'Calmar ansiedad con olfato', 25, false),
+                                                                      ('Exposición a sonidos', 'Reducir miedos', 20, false),
+                                                                      ('Ejercicio físico', 'Juegos de pelota', 40, false);
+
+-- RELACIONES CORRECTAS con planes 14–19 (los creados automáticamente por autoincrement)
+INSERT INTO plan_trabajo_actividades (plan_trabajo_id, actividades_id) VALUES
+                                                                           (14, 2), (14, 4),
+                                                                           (15, 1), (15, 3),
+                                                                           (16, 3),
+                                                                           (17, 2), (17, 6),
+                                                                           (18, 5),
+                                                                           (19, 1), (19, 4);
+
+INSERT INTO plan_trabajo_problemas (plan_trabajo_id, problemas_id) VALUES
+                                                                       (14, 1), (14, 2),
+                                                                       (15, 3),
+                                                                       (16, 4),
+                                                                       (17, 5),
+                                                                       (18, 6),
+                                                                       (19, 1), (19, 4);

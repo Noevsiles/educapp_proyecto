@@ -18,7 +18,7 @@ public class SolucionAplicada {
     @Column(name="id_solucion_aplicada")
     private Long idSolucionAplicada;
 
-    private int numeroDeSesiones;
+    private Integer numeroDeSesiones;
 
     @ManyToOne
     @JoinColumn(name = "id_problema_de_conducta")

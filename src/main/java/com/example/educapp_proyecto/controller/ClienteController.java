@@ -1,7 +1,11 @@
 package com.example.educapp_proyecto.controller;
 
 
+import com.example.educapp_proyecto.dto.ClienteRequestDto;
+import com.example.educapp_proyecto.dto.ClienteResponseDto;
 import com.example.educapp_proyecto.model.Cliente;
+import com.example.educapp_proyecto.model.Educador;
+import com.example.educapp_proyecto.repository.EducadorRepository;
 import com.example.educapp_proyecto.service.impl.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,10 +21,13 @@ public class ClienteController {
     @Autowired
     private ClienteService clienteService;
 
+    @Autowired
+    private EducadorRepository educadorRepository;
+
     // Crear un cliente
     @PostMapping
-    public ResponseEntity<Cliente> crearCliente(@RequestBody Cliente cliente) {
-        Cliente nuevoCliente = clienteService.save(cliente);
+    public ResponseEntity<ClienteResponseDto> crearCliente(@RequestBody ClienteRequestDto dto) {
+        ClienteResponseDto nuevoCliente = clienteService.crearClienteDesdeDto(dto);
         return new ResponseEntity<>(nuevoCliente, HttpStatus.CREATED);
     }
 

@@ -2,7 +2,8 @@ package com.example.educapp_proyecto.controller;
 
 
 import com.example.educapp_proyecto.model.Perro;
-import com.example.educapp_proyecto.service.impl.PerroService;
+import com.example.educapp_proyecto.service.BreedServiceInterface;
+import com.example.educapp_proyecto.service.PerroServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,10 @@ import java.util.List;
 @RequestMapping("/perro")
 public class PerroController {
     @Autowired
-    private PerroService perroService;
+    private PerroServiceInterface perroService;
+
+    @Autowired
+    private BreedServiceInterface breedService;
 
     // Crear un perro
     @PostMapping
@@ -62,5 +66,17 @@ public class PerroController {
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    // Obtener todas las razas
+    @GetMapping("/razas")
+    public ResponseEntity<List<String>> getAllBreeds() {
+        return ResponseEntity.ok(breedService.getAllBreeds());
+    }
+
+    // Obtener las imagenes de las razas
+    @GetMapping("/razas/{breed}/imagenes")
+    public ResponseEntity<List<String>> getBreedImages(@PathVariable String breed) {
+        return ResponseEntity.ok(breedService.getBreedImages(breed));
     }
 }

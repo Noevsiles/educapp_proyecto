@@ -1,9 +1,14 @@
 package com.example.educapp_proyecto.model;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name="actividad")
@@ -21,8 +26,12 @@ public class Actividad {
 
     @ManyToOne
     @JoinColumn(name = "solucion_aplicada_id")
+    @JsonIgnore
     private SolucionAplicada solucionAplicada;
 
     private boolean completado;
 
+    @ManyToMany(mappedBy = "actividades", fetch = FetchType.LAZY)
+    @JsonIgnoreProperties("actividades")
+    private Set<PlanTrabajo> planesTrabajo = new HashSet<>();
 }
