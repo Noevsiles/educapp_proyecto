@@ -1,10 +1,12 @@
 package com.example.educapp_proyecto.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -34,5 +36,5 @@ public class Perro {
             joinColumns = @JoinColumn(name = "perro_id"),
             inverseJoinColumns = @JoinColumn(name = "problema_id")
     )
-    private List<ProblemaDeConducta> problemasDeConducta;
+    private List<ProblemaDeConducta> problemasDeConducta = new ArrayList<>();
 }

@@ -6,8 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Entity
 @Table(name="problema_de_conducta")
@@ -22,14 +22,17 @@ public class ProblemaDeConducta {
     private String nombre;
     private String descripcion;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "perro_id")
     private Perro perro;
 
     @OneToMany(mappedBy = "problemaDeConducta")
-    private List<SolucionAplicada> solucionAplicadas;
+    private List<SolucionAplicada> solucionAplicadas = new ArrayList<>();
 
     @OneToMany(mappedBy = "problemaDeConducta")
-    private List<CausaDeProblema> causaDeProblemas;
+    private List<CausaDeProblema> causaDeProblemas = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "problemasDeConducta")
+    private List<Perro> perros = new ArrayList<>();
 
 }

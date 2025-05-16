@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/soluciones-aplicadas")
+@RequestMapping("/api/soluciones-aplicadas")
 public class SolucionAplicadaController {
     @Autowired
     private SolucionAplicadaService solucionAplicadaService;

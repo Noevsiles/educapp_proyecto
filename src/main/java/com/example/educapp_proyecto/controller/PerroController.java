@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @Controller
-@RequestMapping("/perro")
+@RequestMapping("/api/perros")
 public class PerroController {
     @Autowired
     private PerroServiceInterface perroService;
