@@ -1,6 +1,8 @@
 package com.example.educapp_proyecto.service;
 
 
+import com.example.educapp_proyecto.dto.PerroRequestDto;
+import com.example.educapp_proyecto.dto.PerroResponseDto;
 import com.example.educapp_proyecto.model.Perro;
 
 import java.util.List;
@@ -11,4 +13,5 @@ public interface PerroServiceInterface {
     Perro save(Perro entity);
     void deleteById(Long id);
     Perro updatePerro(Long id, Perro perro);
+    PerroResponseDto crearPerro(PerroRequestDto dto);
 }

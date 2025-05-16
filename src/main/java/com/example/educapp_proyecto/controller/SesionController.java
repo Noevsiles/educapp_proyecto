@@ -1,6 +1,7 @@
 package com.example.educapp_proyecto.controller;
 
 
+import com.example.educapp_proyecto.dto.SesionRequestDto;
 import com.example.educapp_proyecto.model.Sesion;
 import com.example.educapp_proyecto.service.impl.SesionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +20,9 @@ public class SesionController {
 
     // Crear una sesión
     @PostMapping
-    public ResponseEntity<Sesion> crearSesion(@RequestBody Sesion sesion) {
-        Sesion nuevaSesion = sesionService.save(sesion);
-        return new ResponseEntity<>(nuevaSesion, HttpStatus.CREATED);
+    public ResponseEntity<Sesion> crearSesion(@RequestBody SesionRequestDto dto) {
+        Sesion nueva = sesionService.crearSesion(dto);
+        return new ResponseEntity<>(nueva, HttpStatus.CREATED);
     }
 
     // Obtener todas las sesiones

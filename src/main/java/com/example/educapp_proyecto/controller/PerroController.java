@@ -1,6 +1,8 @@
 package com.example.educapp_proyecto.controller;
 
 
+import com.example.educapp_proyecto.dto.PerroRequestDto;
+import com.example.educapp_proyecto.dto.PerroResponseDto;
 import com.example.educapp_proyecto.model.Perro;
 import com.example.educapp_proyecto.service.BreedServiceInterface;
 import com.example.educapp_proyecto.service.PerroServiceInterface;
@@ -23,9 +25,9 @@ public class PerroController {
 
     // Crear un perro
     @PostMapping
-    public ResponseEntity<Perro> crearPerro(@RequestBody Perro perro) {
-        Perro nuevoPerro = perroService.save(perro);
-        return new ResponseEntity<>(nuevoPerro, HttpStatus.CREATED);
+    public ResponseEntity<PerroResponseDto> crearPerro(@RequestBody PerroRequestDto dto) {
+        PerroResponseDto nuevo = perroService.crearPerro(dto);
+        return new ResponseEntity<>(nuevo, HttpStatus.CREATED);
     }
 
     // Obtener todos los perros

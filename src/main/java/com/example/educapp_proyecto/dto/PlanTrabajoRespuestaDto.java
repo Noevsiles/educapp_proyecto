@@ -12,4 +12,5 @@ public class PlanTrabajoRespuestaDto {
     private String emailCliente;
     private List<String> problemas;
     private List<String> actividades;
+    private List<String> nombresPerros;
 }

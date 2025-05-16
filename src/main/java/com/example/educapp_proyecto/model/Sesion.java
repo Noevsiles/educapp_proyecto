@@ -22,6 +22,9 @@ public class Sesion {
     private LocalDateTime fechaHora;
     private String tipoSesion;
 
+    private boolean realizada = false;
+    private String observaciones;
+
     @ManyToOne
     @JoinColumn(name = "educador_id")
     private Educador educador;
@@ -29,5 +32,13 @@ public class Sesion {
     @ManyToOne
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
+
+    @ManyToOne
+    @JoinColumn(name = "perro_id")
+    private Perro perro;
+
+    @ManyToOne
+    @JoinColumn(name = "plan_trabajo_id")
+    private PlanTrabajo planTrabajo;
 
 }

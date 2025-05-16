@@ -2,10 +2,7 @@ package com.example.educapp_proyecto.service.impl;
 
 import com.example.educapp_proyecto.dto.PlanTrabajoDto;
 import com.example.educapp_proyecto.dto.PlanTrabajoRespuestaDto;
-import com.example.educapp_proyecto.model.Actividad;
-import com.example.educapp_proyecto.model.Cliente;
-import com.example.educapp_proyecto.model.PlanTrabajo;
-import com.example.educapp_proyecto.model.ProblemaDeConducta;
+import com.example.educapp_proyecto.model.*;
 import com.example.educapp_proyecto.repository.ActividadRepository;
 import com.example.educapp_proyecto.repository.ClienteRepository;
 import com.example.educapp_proyecto.repository.PlanTrabajoRepository;
@@ -87,10 +84,16 @@ public class PlanTrabajoService implements PlanTrabajoServiceInterface {
                         .collect(Collectors.toList())
         );
 
+        //Convertir nombres de perros
+        dto.setNombresPerros(
+                plan.getCliente().getPerros().stream()
+                        .map(Perro::getNombre)
+                        .collect(Collectors.toList())
+        );
+
+
         return dto;
     }
-
-
 
     @Transactional
     @Override

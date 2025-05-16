@@ -1,6 +1,10 @@
 package com.example.educapp_proyecto.service.impl;
 
+import com.example.educapp_proyecto.dto.PerroRequestDto;
+import com.example.educapp_proyecto.dto.PerroResponseDto;
+import com.example.educapp_proyecto.model.Cliente;
 import com.example.educapp_proyecto.model.Perro;
+import com.example.educapp_proyecto.repository.ClienteRepository;
 import com.example.educapp_proyecto.repository.PerroRepository;
 import com.example.educapp_proyecto.service.PerroServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +17,9 @@ import java.util.Optional;
 public class PerroService implements PerroServiceInterface {
     @Autowired
     private PerroRepository perroRepository;
+
+    @Autowired
+    ClienteRepository clienteRepository;
 
 
     @Override
@@ -52,5 +59,32 @@ public class PerroService implements PerroServiceInterface {
         } else {
             throw new RuntimeException("Perro no encontrado con el id: " + id);
         }
+    }
+
+    @Override
+    public PerroResponseDto crearPerro(PerroRequestDto dto) {
+        Cliente cliente = clienteRepository.findById(dto.getClienteId())
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado con ID " + dto.getClienteId()));
+
+        Perro perro = new Perro();
+        perro.setNombre(dto.getNombre());
+        perro.setRaza(dto.getRaza());
+        perro.setSexo(dto.getSexo());
+        perro.setEdad(dto.getEdad());
+        perro.setEsterilizado(dto.isEsterilizado());
+        perro.setCliente(cliente);
+
+        Perro guardado = perroRepository.save(perro);
+
+        PerroResponseDto response = new PerroResponseDto();
+        response.setId(guardado.getIdPerro());
+        response.setNombre(guardado.getNombre());
+        response.setRaza(guardado.getRaza());
+        response.setSexo(guardado.getSexo());
+        response.setEdad(guardado.getEdad());
+        response.setEsterilizado(guardado.isEsterilizado());
+        response.setNombreCliente(cliente.getNombre());
+
+        return response;
     }
 }

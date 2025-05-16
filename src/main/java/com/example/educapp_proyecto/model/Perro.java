@@ -28,6 +28,11 @@ public class Perro {
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
-    @OneToMany(mappedBy = "perro")
+    @ManyToMany
+    @JoinTable(
+            name = "perro_problemas",
+            joinColumns = @JoinColumn(name = "perro_id"),
+            inverseJoinColumns = @JoinColumn(name = "problema_id")
+    )
     private List<ProblemaDeConducta> problemasDeConducta;
 }

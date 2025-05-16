@@ -13,4 +13,5 @@ public class PlanTrabajoDto {
     private List<Long> problemaIds;
     private List<Long> actividadIds;
     private String observaciones;
+    private List<String> nombresPerros;
 }

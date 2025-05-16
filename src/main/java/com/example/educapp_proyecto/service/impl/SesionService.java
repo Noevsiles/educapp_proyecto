@@ -1,7 +1,8 @@
 package com.example.educapp_proyecto.service.impl;
 
-import com.example.educapp_proyecto.model.Sesion;
-import com.example.educapp_proyecto.repository.SesionRepository;
+import com.example.educapp_proyecto.dto.SesionRequestDto;
+import com.example.educapp_proyecto.model.*;
+import com.example.educapp_proyecto.repository.*;
 import com.example.educapp_proyecto.service.SesionServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,52 @@ public class SesionService implements SesionServiceInterface {
 
     @Autowired
     private SesionRepository sesionRepository;
+
+    @Autowired
+    private ClienteRepository clienteRepository;
+
+    @Autowired
+    private EducadorRepository educadorRepository;
+
+    @Autowired
+    private PerroRepository perroRepository;
+
+    @Autowired
+    private PlanTrabajoRepository planTrabajoRepository;
+
+    // Crear sesion
+    @Override
+    public Sesion crearSesion(SesionRequestDto dto) {
+        Cliente cliente = clienteRepository.findById(dto.getClienteId())
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+
+        Educador educador = educadorRepository.findById(dto.getEducadorId())
+                .orElseThrow(() -> new RuntimeException("Educador no encontrado"));
+
+        Perro perro = null;
+        if (dto.getPerroId() != null) {
+            perro = perroRepository.findById(dto.getPerroId())
+                    .orElseThrow(() -> new RuntimeException("Perro no encontrado"));
+        }
+
+        PlanTrabajo plan = null;
+        if (dto.getPlanTrabajoId() != null) {
+            plan = planTrabajoRepository.findById(dto.getPlanTrabajoId())
+                    .orElseThrow(() -> new RuntimeException("Plan de trabajo no encontrado"));
+        }
+
+        Sesion sesion = new Sesion();
+        sesion.setFechaHora(dto.getFechaHora());
+        sesion.setTipoSesion(dto.getTipoSesion());
+        sesion.setObservaciones(dto.getObservaciones());
+        sesion.setRealizada(false);
+        sesion.setCliente(cliente);
+        sesion.setEducador(educador);
+        sesion.setPerro(perro);
+        sesion.setPlanTrabajo(plan);
+
+        return sesionRepository.save(sesion);
+    }
 
     @Override
     public List<Sesion> findAll() {
