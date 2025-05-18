@@ -1,5 +1,6 @@
 package com.example.educapp_proyecto.service.impl;
 
+import com.example.educapp_proyecto.dto.HuecoAgendaDto;
 import com.example.educapp_proyecto.dto.SesionRequestDto;
 import com.example.educapp_proyecto.model.*;
 import com.example.educapp_proyecto.repository.*;
@@ -7,6 +8,11 @@ import com.example.educapp_proyecto.service.SesionServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +33,10 @@ public class SesionService implements SesionServiceInterface {
 
     @Autowired
     private PlanTrabajoRepository planTrabajoRepository;
+
+    @Autowired
+    private DisponibilidadRepository disponibilidadRepository;
+
 
     // Crear sesion
     @Override
@@ -90,4 +100,41 @@ public class SesionService implements SesionServiceInterface {
             throw new RuntimeException("No se pudo eliminar, sesión no encontrada con el id: " + id);
         }
     }
+
+    // Obtener los huecos disponibles para las sesiones
+    @Override
+    public List<HuecoAgendaDto> obtenerHuecosDisponibles(Long idEducador, LocalDate fecha) {
+        DayOfWeek diaSemana = fecha.getDayOfWeek();
+
+        // Busca directamente la disponibilidad para el día y educador
+        List<Disponibilidad> disponibilidades = disponibilidadRepository.buscarPorEducadorYDia(idEducador, diaSemana);
+        if (disponibilidades.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        Disponibilidad disp = disponibilidades.get(0);
+        LocalDateTime inicio = fecha.atTime(disp.getHoraInicio());
+        LocalDateTime fin = fecha.atTime(disp.getHoraFin());
+
+        List<Sesion> sesionesReservadas = sesionRepository
+                .buscarPorEducadorIdYFechaHoraEntre(idEducador, inicio, fin);
+
+        List<HuecoAgendaDto> huecos = new ArrayList<>();
+        LocalDateTime huecoInicio = inicio;
+        while (!huecoInicio.plusHours(1).isAfter(fin)) {
+            LocalDateTime huecoFin = huecoInicio.plusHours(1);
+            final LocalDateTime horaActual = huecoInicio;
+
+            boolean ocupado = sesionesReservadas.stream()
+                    .anyMatch(s -> s.getFechaHora().equals(horaActual));
+            if (!ocupado) {
+                huecos.add(new HuecoAgendaDto(horaActual, huecoFin));
+            }
+
+            huecoInicio = huecoFin;
+        }
+
+        return huecos;
+    }
+
 }
