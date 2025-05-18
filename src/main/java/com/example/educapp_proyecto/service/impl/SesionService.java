@@ -1,9 +1,12 @@
 package com.example.educapp_proyecto.service.impl;
 
+import com.example.educapp_proyecto.dto.HuecoAgendaCompletoDto;
 import com.example.educapp_proyecto.dto.HuecoAgendaDto;
+import com.example.educapp_proyecto.dto.ReservaSesionDto;
 import com.example.educapp_proyecto.dto.SesionRequestDto;
 import com.example.educapp_proyecto.model.*;
 import com.example.educapp_proyecto.repository.*;
+import com.example.educapp_proyecto.service.RecordatorioService;
 import com.example.educapp_proyecto.service.SesionServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class SesionService implements SesionServiceInterface {
@@ -36,6 +40,9 @@ public class SesionService implements SesionServiceInterface {
 
     @Autowired
     private DisponibilidadRepository disponibilidadRepository;
+
+    @Autowired
+    private RecordatorioService recordatorioService;
 
 
     // Crear sesion
@@ -128,7 +135,7 @@ public class SesionService implements SesionServiceInterface {
             boolean ocupado = sesionesReservadas.stream()
                     .anyMatch(s -> s.getFechaHora().equals(horaActual));
             if (!ocupado) {
-                huecos.add(new HuecoAgendaDto(horaActual, huecoFin));
+                huecos.add(new HuecoAgendaDto(horaActual, huecoFin, ocupado));
             }
 
             huecoInicio = huecoFin;
@@ -137,4 +144,107 @@ public class SesionService implements SesionServiceInterface {
         return huecos;
     }
 
+    @Override
+    public Sesion reservarSesion(ReservaSesionDto reserva) {
+        // Compruebo si ya hay una sesión en el horario elegido con ese educador
+        List<Sesion> ocupadas = sesionRepository.buscarPorEducadorIdYFechaHoraEntre(
+                reserva.getIdEducador(),
+                reserva.getFechaHora(),
+                reserva.getFechaHora()
+        );
+        if (!ocupadas.isEmpty()) {
+            throw new RuntimeException("Ese horario ya está reservado.");
+        }
+
+        Sesion nueva = new Sesion();
+        nueva.setFechaHora(reserva.getFechaHora());
+        nueva.setTipoSesion("Reserva");
+        nueva.setRealizada(false);
+        nueva.setObservaciones("");
+
+        // Lanzo una excepción si no se encuentra el cliente, el perro, el educador o el plan de trabajo
+        Cliente cliente = clienteRepository.findById(reserva.getIdCliente())
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+        Perro perro = perroRepository.findById(reserva.getIdPerro())
+                .orElseThrow(() -> new RuntimeException("Perro no encontrado"));
+        Educador educador = educadorRepository.findById(reserva.getIdEducador())
+                .orElseThrow(() -> new RuntimeException("Educador no encontrado"));
+        PlanTrabajo plan = planTrabajoRepository.findById(reserva.getIdPlanTrabajo())
+                .orElseThrow(() -> new RuntimeException("Plan de trabajo no encontrado"));
+
+        nueva.setCliente(cliente);
+        nueva.setPerro(perro);
+        nueva.setEducador(educador);
+        nueva.setPlanTrabajo(plan);
+
+        return sesionRepository.save(nueva);
+    }
+
+    @Override
+    public List<HuecoAgendaCompletoDto> obtenerAgendaCompleta(Long idEducador, LocalDate fecha) {
+        DayOfWeek diaSemana = fecha.getDayOfWeek();
+        List<Disponibilidad> disponibilidades = disponibilidadRepository.buscarPorEducadorYDia(idEducador, diaSemana);
+        if (disponibilidades.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        Disponibilidad disp = disponibilidades.get(0);
+        LocalDateTime inicio = fecha.atTime(disp.getHoraInicio());
+        LocalDateTime fin = fecha.atTime(disp.getHoraFin());
+
+        List<Sesion> sesionesReservadas = sesionRepository.buscarPorEducadorIdYFechaHoraEntre(idEducador, inicio, fin);
+
+        List<HuecoAgendaCompletoDto> huecos = new ArrayList<>();
+        LocalDateTime huecoInicio = inicio;
+
+        while (!huecoInicio.plusHours(1).isAfter(fin)) {
+            LocalDateTime huecoFin = huecoInicio.plusHours(1);
+            final LocalDateTime hora = huecoInicio;
+            boolean ocupado = sesionesReservadas.stream()
+                    .anyMatch(s -> s.getFechaHora().equals(hora));
+            huecos.add(new HuecoAgendaCompletoDto(hora, huecoFin, ocupado));
+            huecoInicio = huecoFin;
+        }
+
+        return huecos;
+    }
+
+    // Marcar sesiones como realizadas
+    @Override
+    public Sesion marcarComoRealizada(Long idSesion) {
+        Sesion sesion = sesionRepository.findById(idSesion)
+                .orElseThrow(() -> new RuntimeException("Sesión no encontrada"));
+
+        sesion.setRealizada(true);
+        return sesionRepository.save(sesion);
+    }
+
+    // Filtrar sesiones por cliente, perro o educador
+    @Override
+    public List<Sesion> filtrarSesiones(Long clienteId, Long perroId, Long educadorId) {
+        return sesionRepository.findAll().stream()
+                .filter(s -> (clienteId == null || s.getCliente().getIdCliente().equals(clienteId)))
+                .filter(s -> (perroId == null || s.getPerro().getIdPerro().equals(perroId)))
+                .filter(s -> (educadorId == null || s.getEducador().getIdEducador().equals(educadorId)))
+                .collect(Collectors.toList());
+    }
+
+    // Enviar recordatorios de sesiones por email
+    @Override
+    public void enviarRecordatorios() {
+        // Busca sesiones dentro de las próximas 24 horas
+        LocalDateTime ahora = LocalDateTime.now();
+        LocalDateTime mañana = ahora.plusHours(24);
+
+        List<Sesion> proximas = sesionRepository
+                .findAll()
+                .stream()
+                .filter(s -> !s.isRealizada())
+                .filter(s -> s.getFechaHora().isAfter(ahora) && s.getFechaHora().isBefore(mañana))
+                .collect(Collectors.toList());
+
+        for (Sesion sesion : proximas) {
+            recordatorioService.enviarRecordatorio(sesion);
+        }
+    }
 }

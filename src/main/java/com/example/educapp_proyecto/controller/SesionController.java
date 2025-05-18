@@ -1,6 +1,7 @@
 package com.example.educapp_proyecto.controller;
 
 
+import com.example.educapp_proyecto.dto.ReservaSesionDto;
 import com.example.educapp_proyecto.dto.SesionRequestDto;
 import com.example.educapp_proyecto.model.Sesion;
 import com.example.educapp_proyecto.service.impl.SesionService;
@@ -64,4 +65,37 @@ public class SesionController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    //Reservar una sesión
+    @PostMapping("/reservar")
+    public ResponseEntity<Sesion> reservar(@RequestBody ReservaSesionDto reserva) {
+        Sesion sesion = sesionService.reservarSesion(reserva);
+        return ResponseEntity.ok(sesion);
+    }
+
+    //Marcar sesion como realizada
+    @PatchMapping("/{id}/realizar")
+    public ResponseEntity<Sesion> marcarSesionComoRealizada(@PathVariable Long id) {
+        Sesion sesionActualizada = sesionService.marcarComoRealizada(id);
+        return ResponseEntity.ok(sesionActualizada);
+    }
+
+    //Filtrar las sesiones por cliente, perro o educador
+    @GetMapping("/filtrar")
+    public ResponseEntity<List<Sesion>> filtrarSesiones(
+            @RequestParam(required = false) Long clienteId,
+            @RequestParam(required = false) Long perroId,
+            @RequestParam(required = false) Long educadorId
+    ) {
+        List<Sesion> resultado = sesionService.filtrarSesiones(clienteId, perroId, educadorId);
+        return ResponseEntity.ok(resultado);
+    }
+
+    //Enviar recordatorios de sesiones
+    @PostMapping("/enviar-recordatorios")
+    public ResponseEntity<String> enviarRecordatorios() {
+        sesionService.enviarRecordatorios();
+        return ResponseEntity.ok("Recordatorios enviados correctamente");
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.example.educapp_proyecto.controller;
 
+import com.example.educapp_proyecto.dto.HuecoAgendaCompletoDto;
 import com.example.educapp_proyecto.dto.HuecoAgendaDto;
 import com.example.educapp_proyecto.service.SesionServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,5 +26,13 @@ public class AgendaController {
     ) {
         List<HuecoAgendaDto> slots = sesionService.obtenerHuecosDisponibles(idEducador, fecha);
         return ResponseEntity.ok(slots);
+    }
+
+    // Obtener la agenda completa del adiestrador
+    @GetMapping("/completa")
+    public List<HuecoAgendaCompletoDto> obtenerAgendaCompleta(
+            @PathVariable("idEducador") Long idEducador,
+            @RequestParam("fecha") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha) {
+        return sesionService.obtenerAgendaCompleta(idEducador, fecha);
     }
 }
