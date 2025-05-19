@@ -5,6 +5,7 @@ import com.example.educapp_proyecto.model.Rol;
 import com.example.educapp_proyecto.model.Usuario;
 import com.example.educapp_proyecto.repository.RolRepository;
 import com.example.educapp_proyecto.repository.UsuarioRepository;
+import com.example.educapp_proyecto.security.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,6 +26,9 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     @PostMapping("/registro")
     public ResponseEntity<String> registrarUsuario(@RequestBody RegistroRequestDto dto) {
         if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
@@ -43,4 +47,18 @@ public class AuthController {
 
         return ResponseEntity.ok("Usuario registrado correctamente");
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody RegistroRequestDto dto) {
+        Usuario usuario = usuarioRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+
+        if (!passwordEncoder.matches(dto.getPassword(), usuario.getPassword())) {
+            return ResponseEntity.status(401).body("Contraseña incorrecta");
+        }
+
+        String token = jwtUtil.generarToken(usuario.getEmail());
+        return ResponseEntity.ok(token);
+    }
+
 }
