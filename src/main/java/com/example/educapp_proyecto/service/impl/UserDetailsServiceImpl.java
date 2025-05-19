@@ -17,6 +17,7 @@ public class UserDetailsServiceImpl implements UserDetailsServiceInterface {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    // Cargar un usuario por su nombre de usuario
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Usuario usuario = usuarioRepository.findByEmail(email)

@@ -1,6 +1,6 @@
 package com.example.educapp_proyecto.controller;
 
-import com.example.educapp_proyecto.service.impl.PerroService;
+import com.example.educapp_proyecto.service.impl.InformePdfService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/informes")
 @RequiredArgsConstructor
 public class InformePdfController {
-    private final PerroService.InformePdfService informePdfService;
+
+    private final InformePdfService informePdfService;
 
     @GetMapping("/perro/{idPerro}/pdf")
     public ResponseEntity<byte[]> generarInformePdf(@PathVariable Long idPerro) throws Exception {

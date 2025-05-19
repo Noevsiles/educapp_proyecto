@@ -5,8 +5,8 @@ import com.example.educapp_proyecto.dto.ReservaSesionDto;
 import com.example.educapp_proyecto.dto.SesionRequestDto;
 import com.example.educapp_proyecto.model.*;
 import com.example.educapp_proyecto.repository.*;
+import com.example.educapp_proyecto.service.impl.RecordatorioService;
 import com.example.educapp_proyecto.service.impl.SesionService;
-import com.example.educapp_proyecto.service.impl.SolucionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,7 +51,7 @@ public class SesionServiceTest {
     private DisponibilidadRepository disponibilidadRepository;
 
     @Mock
-    private SolucionService.RecordatorioService recordatorioService;
+    private RecordatorioService recordatorioService;
 
     private Cliente cliente;
     private Educador educador;
@@ -142,35 +142,23 @@ public class SesionServiceTest {
     @Test
     void testReservarSesion_ConSolapamiento() {
         ReservaSesionDto reserva = new ReservaSesionDto();
-        reserva.setFechaHora(LocalDateTime.of(2025, 5, 20, 10, 0));
+        reserva.setIdEducador(1L);
+        reserva.setFechaHora(LocalDateTime.now().plusDays(1));
         reserva.setIdCliente(1L);
-        reserva.setIdEducador(2L);
-        reserva.setIdPerro(3L);
-        reserva.setIdPlanTrabajo(4L);
+        reserva.setIdPerro(1L);
+        reserva.setIdPlanTrabajo(1L);
 
-        Cliente cliente = new Cliente(); cliente.setIdCliente(1L);
-        Perro perro = new Perro(); perro.setIdPerro(3L);
-        Educador educador = new Educador(); educador.setIdEducador(2L);
-        PlanTrabajo plan = new PlanTrabajo(); plan.setId(4L);
-
-        Sesion existente = new Sesion();
-        existente.setFechaHora(reserva.getFechaHora());
-
-        // Mock de entidades
-        when(clienteRepository.findById(1L)).thenReturn(Optional.of(cliente));
-        when(perroRepository.findById(3L)).thenReturn(Optional.of(perro));
-        when(educadorRepository.findById(2L)).thenReturn(Optional.of(educador));
-        when(planTrabajoRepository.findById(4L)).thenReturn(Optional.of(plan));
         when(sesionRepository.buscarPorEducadorIdYFechaHoraEntre(
-                eq(2L),
-                eq(reserva.getFechaHora()),
-                eq(reserva.getFechaHora())
-        )).thenReturn(List.of(existente));
+                anyLong(), any(), any()
+        )).thenReturn(List.of(new Sesion())); // Ya hay sesión en ese horario
 
-        // Verifica que lanza la excepción
-        assertThrows(RuntimeException.class, () -> {
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> {
             sesionService.reservarSesion(reserva);
         });
+
+        assertEquals("Ese horario ya está reservado.", ex.getMessage());
+
+        verify(sesionRepository).buscarPorEducadorIdYFechaHoraEntre(anyLong(), any(), any());
     }
 
     // Test para comprobar que funciona el metodo marcarComoRealizada()

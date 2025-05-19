@@ -9,7 +9,6 @@ import com.example.educapp_proyecto.repository.*;
 import com.example.educapp_proyecto.service.SesionServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -41,7 +40,7 @@ public class SesionService implements SesionServiceInterface {
     private DisponibilidadRepository disponibilidadRepository;
 
     @Autowired
-    private SolucionService.RecordatorioService recordatorioService;
+    private RecordatorioService recordatorioService;
 
 
     // Crear sesion
@@ -179,6 +178,7 @@ public class SesionService implements SesionServiceInterface {
         return sesionRepository.save(nueva);
     }
 
+    // Obtener la agenda completa de un educador
     @Override
     public List<HuecoAgendaCompletoDto> obtenerAgendaCompleta(Long idEducador, LocalDate fecha) {
         DayOfWeek diaSemana = fecha.getDayOfWeek();
@@ -233,13 +233,13 @@ public class SesionService implements SesionServiceInterface {
     public void enviarRecordatorios() {
         // Busca sesiones dentro de las próximas 24 horas
         LocalDateTime ahora = LocalDateTime.now();
-        LocalDateTime mañana = ahora.plusHours(24);
+        LocalDateTime maniana = ahora.plusHours(24);
 
         List<Sesion> proximas = sesionRepository
                 .findAll()
                 .stream()
                 .filter(s -> !s.isRealizada())
-                .filter(s -> s.getFechaHora().isAfter(ahora) && s.getFechaHora().isBefore(mañana))
+                .filter(s -> s.getFechaHora().isAfter(ahora) && s.getFechaHora().isBefore(maniana))
                 .collect(Collectors.toList());
 
         for (Sesion sesion : proximas) {

@@ -7,7 +7,6 @@ import com.example.educapp_proyecto.repository.SolucionAplicadaRepository;
 import com.example.educapp_proyecto.service.SolucionAplicadaServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -15,6 +14,7 @@ import java.util.Optional;
 public class SolucionAplicadaService implements SolucionAplicadaServiceInterface {
     @Autowired
     private SolucionAplicadaRepository solucionAplicadaRepository;
+
     private ActividadRepository actividadRepository;
 
 

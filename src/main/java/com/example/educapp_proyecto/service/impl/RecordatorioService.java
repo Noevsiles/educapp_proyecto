@@ -17,18 +17,18 @@ public class RecordatorioService {
     private SesionRepository sesionRepository;
 
     @Autowired
-    private ProblemaDeConductaService.EmailService emailService;
+    private EmailService emailService;
 
     // Revisa cada hora si hay sesiones que empiezan en 3h
     @Scheduled(cron = "0 0 * * * *")
     public void enviarRecordatorios() {
         System.out.println("Buscando sesiones para enviar recordatorios...");
         LocalDateTime ahora = LocalDateTime.now();
-        LocalDateTime dentroDeCincoMin = ahora.plusMinutes(5);
+        LocalDateTime enTresHoras = ahora.plusHours(3);;
 
         List<Sesion> proximasSesiones = sesionRepository.findAll().stream()
                 .filter(s -> !s.isRealizada())
-                .filter(s -> s.getFechaHora().isAfter(ahora) && s.getFechaHora().isBefore(dentroDeCincoMin))
+                .filter(s -> s.getFechaHora().isAfter(ahora) && s.getFechaHora().isBefore(enTresHoras))
                 .collect(Collectors.toList());
 
         for (Sesion s : proximasSesiones) {

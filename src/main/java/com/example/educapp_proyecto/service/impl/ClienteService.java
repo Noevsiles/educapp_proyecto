@@ -60,6 +60,7 @@ public class ClienteService implements ClienteServiceInterface {
         }
     }
 
+    // Crear un cliente a traves del dto
     @Override
     public ClienteResponseDto crearClienteDesdeDto(ClienteRequestDto dto) {
         Educador educador = educadorRepository.findById(dto.getEducadorId())
