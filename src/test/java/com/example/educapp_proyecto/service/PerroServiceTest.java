@@ -17,11 +17,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
@@ -81,4 +79,30 @@ public class PerroServiceTest {
         verify(clienteRepository).findById(1L);
         verify(perroRepository).save(any(Perro.class));
     }
+
+    // Test para qrear perro con cliente que no existe y lance excepcion
+    @Test
+    void testCrearPerro_ClienteNoExiste_lanzaExcepcion() {
+        // DTO con un cliente que no existe
+        PerroRequestDto dto = new PerroRequestDto();
+        dto.setClienteId(999L);
+        dto.setNombre("Max");
+        dto.setRaza("Labrador");
+        dto.setSexo("Macho");
+        dto.setEdad(3);
+        dto.setEsterilizado(true);
+
+        // Simular que no se encuentra el cliente
+        when(clienteRepository.findById(999L)).thenReturn(Optional.empty());
+
+        // Verificar que lanza la excepción esperada
+        RuntimeException ex = assertThrows(RuntimeException.class, () -> {
+            perroService.crearPerro(dto);
+        });
+
+        assertEquals("Cliente no encontrado con ID 999", ex.getMessage());
+        verify(clienteRepository).findById(999L);
+        verifyNoInteractions(perroRepository);
+    }
+
 }

@@ -47,7 +47,7 @@ public class EducadorService implements EducadorServiceInterface {
     // Actualizar un educador
     public Educador updateEducador(Long id, Educador educador) {
         if (educadorRepository.existsById(id)) {
-            educador.setIdEducador(id);  // Aseguramos que el ID es el mismo
+            educador.setIdEducador(id);
             return educadorRepository.save(educador);
         } else {
             throw new RuntimeException("Educador no encontrado con el id: " + id);

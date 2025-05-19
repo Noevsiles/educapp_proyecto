@@ -6,7 +6,6 @@ import com.example.educapp_proyecto.dto.ReservaSesionDto;
 import com.example.educapp_proyecto.dto.SesionRequestDto;
 import com.example.educapp_proyecto.model.*;
 import com.example.educapp_proyecto.repository.*;
-import com.example.educapp_proyecto.service.RecordatorioService;
 import com.example.educapp_proyecto.service.SesionServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,7 +41,7 @@ public class SesionService implements SesionServiceInterface {
     private DisponibilidadRepository disponibilidadRepository;
 
     @Autowired
-    private RecordatorioService recordatorioService;
+    private SolucionService.RecordatorioService recordatorioService;
 
 
     // Crear sesion

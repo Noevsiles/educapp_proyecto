@@ -47,7 +47,7 @@ public class CausaService implements CausaServiceInterface {
     // Actualizar una causa
     public Causa updateCausa(Long id, Causa causa) {
         if (causaRepository.existsById(id)) {
-            causa.setIdCausa(id);  // Aseguramos que el ID es el mismo
+            causa.setIdCausa(id);
             return causaRepository.save(causa);
         } else {
             throw new RuntimeException("Causa no encontrada con el id: " + id);

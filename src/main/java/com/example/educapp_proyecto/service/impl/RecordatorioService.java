@@ -1,4 +1,4 @@
-package com.example.educapp_proyecto.service;
+package com.example.educapp_proyecto.service.impl;
 
 import com.example.educapp_proyecto.model.Sesion;
 import com.example.educapp_proyecto.repository.SesionRepository;
@@ -17,7 +17,7 @@ public class RecordatorioService {
     private SesionRepository sesionRepository;
 
     @Autowired
-    private EmailService emailService;
+    private ProblemaDeConductaService.EmailService emailService;
 
     // Revisa cada hora si hay sesiones que empiezan en 3h
     @Scheduled(cron = "0 0 * * * *")

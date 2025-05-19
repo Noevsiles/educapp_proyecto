@@ -6,6 +6,7 @@ import com.example.educapp_proyecto.dto.SesionRequestDto;
 import com.example.educapp_proyecto.model.*;
 import com.example.educapp_proyecto.repository.*;
 import com.example.educapp_proyecto.service.impl.SesionService;
+import com.example.educapp_proyecto.service.impl.SolucionService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,7 +51,7 @@ public class SesionServiceTest {
     private DisponibilidadRepository disponibilidadRepository;
 
     @Mock
-    private RecordatorioService recordatorioService;
+    private SolucionService.RecordatorioService recordatorioService;
 
     private Cliente cliente;
     private Educador educador;
