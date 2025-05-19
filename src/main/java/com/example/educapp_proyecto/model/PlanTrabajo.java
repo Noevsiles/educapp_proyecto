@@ -1,19 +1,15 @@
 package com.example.educapp_proyecto.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 @Table(name = "plan_trabajo")
 public class PlanTrabajo {
@@ -46,7 +42,8 @@ public class PlanTrabajo {
             joinColumns = @JoinColumn(name = "plan_trabajo_id"),
             inverseJoinColumns = @JoinColumn(name = "actividades_id")
     )
-
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<Actividad> actividades = new HashSet<>();
 
     private String observaciones;

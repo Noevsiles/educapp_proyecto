@@ -11,4 +11,7 @@ public interface PlanTrabajoServiceInterface  {
     PlanTrabajo crearPlan(PlanTrabajoDto dto);
     List<PlanTrabajoRespuestaDto> listarPlanesPorCliente(Long idCliente);
     PlanTrabajo buscarPorId(Long id);
+
+    // Eliminar un plan de trabajo por id
+    void eliminarPorId(Long id);
 }

@@ -5,7 +5,9 @@ import com.example.educapp_proyecto.dto.PlanTrabajoDto;
 import com.example.educapp_proyecto.dto.PlanTrabajoRespuestaDto;
 import com.example.educapp_proyecto.model.PlanTrabajo;
 import com.example.educapp_proyecto.service.PlanTrabajoServiceInterface;
+import com.example.educapp_proyecto.service.impl.PlanTrabajoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +19,9 @@ public class PlanTrabajoController {
 
     @Autowired
     private PlanTrabajoServiceInterface planService;
+
+    @Autowired
+    private PlanTrabajoService planTrabajoService;
 
     @PostMapping
     public ResponseEntity<PlanTrabajo> crear(@RequestBody PlanTrabajoDto dto) {
@@ -32,4 +37,27 @@ public class PlanTrabajoController {
     public ResponseEntity<PlanTrabajo> porId(@PathVariable Long id) {
         return ResponseEntity.ok(planService.buscarPorId(id));
     }
+
+
+    @GetMapping("/todos")
+    public ResponseEntity<List<PlanTrabajo>> obtenerTodos() {
+        List<PlanTrabajo> planes = planTrabajoService.obtenerTodos();
+        return ResponseEntity.ok(planes);
+    }
+
+    @PostMapping("/save")
+    public ResponseEntity<PlanTrabajo> save(@RequestBody PlanTrabajo plan) {
+        PlanTrabajo creado = planTrabajoService.save(plan);
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(creado);
+    }
+
+    // Eliminar un plan de trabajo por su id
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminarPorId(@PathVariable Long id) {
+        planTrabajoService.eliminarPorId(id);
+        return ResponseEntity.noContent().build();
+    }
+
 }

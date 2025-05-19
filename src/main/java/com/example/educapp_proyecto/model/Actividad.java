@@ -3,9 +3,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.persistence.Entity;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -33,5 +31,7 @@ public class Actividad {
 
     @ManyToMany(mappedBy = "actividades", fetch = FetchType.LAZY)
     @JsonIgnoreProperties("actividades")
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Set<PlanTrabajo> planesTrabajo = new HashSet<>();
 }

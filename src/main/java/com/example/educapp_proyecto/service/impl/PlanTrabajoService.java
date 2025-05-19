@@ -10,8 +10,9 @@ import com.example.educapp_proyecto.repository.ProblemaDeConductaRepository;
 import com.example.educapp_proyecto.service.PlanTrabajoServiceInterface;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.hibernate.Hibernate;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,6 +32,7 @@ public class PlanTrabajoService implements PlanTrabajoServiceInterface {
     @Autowired
     private ActividadRepository actividadRepository;
 
+    // Crear un plan de trabajo
     @Override
     @Transactional
     public PlanTrabajo crearPlan(PlanTrabajoDto dto) {
@@ -55,7 +57,7 @@ public class PlanTrabajoService implements PlanTrabajoServiceInterface {
 
         // Enlazar manualmente la relación inversa
         for (Actividad actividad : actividades) {
-            actividad.getPlanesTrabajo().add(plan);  // ¡IMPORTANTE!
+            actividad.getPlanesTrabajo().add(plan);  // IMPORTANTE!
         }
         PlanTrabajo planGuardado = planTrabajoRepository.save(plan);
         actividadRepository.saveAll(actividades);
@@ -63,6 +65,7 @@ public class PlanTrabajoService implements PlanTrabajoServiceInterface {
         return planGuardado;
     }
 
+    // Convertir el plan de trabajo a DTO
     private PlanTrabajoRespuestaDto convertirAPlanDto(PlanTrabajo plan) {
         PlanTrabajoRespuestaDto dto = new PlanTrabajoRespuestaDto();
         dto.setId(plan.getId());
@@ -95,6 +98,7 @@ public class PlanTrabajoService implements PlanTrabajoServiceInterface {
         return dto;
     }
 
+    // Listar los planes de trabajo por cliente
     @Transactional
     @Override
     public List<PlanTrabajoRespuestaDto> listarPlanesPorCliente(Long idCliente) {
@@ -104,12 +108,27 @@ public class PlanTrabajoService implements PlanTrabajoServiceInterface {
                 .collect(Collectors.toList());
     }
 
-
+    // Buscar plan de trabajo por su id
     @Override
     public PlanTrabajo buscarPorId(Long id) {
         return planTrabajoRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Plan no encontrado"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND,"Plan no encontrado"));
     }
 
+    // Guardar plan de trabajo
+    public PlanTrabajo save(PlanTrabajo plan) {
+        return planTrabajoRepository.save(plan);
+    }
+
+    // Obtener todos los planes de trabajo
+    public List<PlanTrabajo> obtenerTodos() {
+        return planTrabajoRepository.findAll();
+    }
+
+    // Eliminar un plan de trabajo por id
+    @Override
+    public void eliminarPorId(Long id) {
+        planTrabajoRepository.deleteById(id);
+    }
 
 }
