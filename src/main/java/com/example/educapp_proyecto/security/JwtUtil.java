@@ -12,8 +12,8 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512); //clave segura automática
-    private final long EXPIRATION_MS = 86400000; // 1 día
+    private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512); //clave segura automatica
+    private final long EXPIRATION_MS = 86400000; // 1 dia
 
     public String generarToken(String email) {
         return Jwts.builder()

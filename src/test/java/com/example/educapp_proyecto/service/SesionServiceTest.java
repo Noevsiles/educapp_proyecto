@@ -27,7 +27,6 @@ import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-@SpringBootTest
 public class SesionServiceTest {
     @InjectMocks
     private SesionService sesionService;
@@ -364,17 +363,17 @@ public class SesionServiceTest {
     // Test para comprobar si se envian los recordatorios de las sesiones
     @Test
     void testEnviarRecordatorios_soloDentroDe24Horas() {
-        // Sesión válida: no realizada y dentro de las próximas 24h
+        // Sesión valida no realizada y dentro de las proximas 24 horas
         Sesion sesionValida = new Sesion();
         sesionValida.setFechaHora(LocalDateTime.now().plusHours(2));
         sesionValida.setRealizada(false);
 
-        // Sesión fuera del rango de 24h
+        // Sesion fuera del rango de 24h
         Sesion sesionFueraRango = new Sesion();
         sesionFueraRango.setFechaHora(LocalDateTime.now().plusHours(30));
         sesionFueraRango.setRealizada(false);
 
-        // Sesión ya realizada
+        // Sesion ya realizada
         Sesion sesionYaRealizada = new Sesion();
         sesionYaRealizada.setFechaHora(LocalDateTime.now().plusHours(1));
         sesionYaRealizada.setRealizada(true);

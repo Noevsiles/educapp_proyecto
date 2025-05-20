@@ -10,7 +10,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -18,7 +17,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-@SpringBootTest
 public class EducadorServiceTest {
     @Mock
     private EducadorRepository educadorRepository;
@@ -48,6 +46,7 @@ public class EducadorServiceTest {
         verify(educadorRepository).save(educador);
     }
 
+    // Test para combrobar que salta excepcion si el educador no existe
     @Test
     void testUpdateEducador_noExiste() {
         Long id = 99L;
