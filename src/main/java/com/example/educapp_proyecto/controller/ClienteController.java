@@ -4,13 +4,11 @@ package com.example.educapp_proyecto.controller;
 import com.example.educapp_proyecto.dto.ClienteRequestDto;
 import com.example.educapp_proyecto.dto.ClienteResponseDto;
 import com.example.educapp_proyecto.model.Cliente;
-import com.example.educapp_proyecto.model.Educador;
 import com.example.educapp_proyecto.repository.EducadorRepository;
 import com.example.educapp_proyecto.service.impl.ClienteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
