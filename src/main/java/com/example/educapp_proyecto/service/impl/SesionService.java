@@ -4,6 +4,7 @@ import com.example.educapp_proyecto.dto.HuecoAgendaCompletoDto;
 import com.example.educapp_proyecto.dto.HuecoAgendaDto;
 import com.example.educapp_proyecto.dto.ReservaSesionDto;
 import com.example.educapp_proyecto.dto.SesionRequestDto;
+import com.example.educapp_proyecto.exception.HorarioOcupadoException;
 import com.example.educapp_proyecto.model.*;
 import com.example.educapp_proyecto.repository.*;
 import com.example.educapp_proyecto.service.SesionServiceInterface;
@@ -151,7 +152,7 @@ public class SesionService implements SesionServiceInterface {
                 reserva.getFechaHora()
         );
         if (!ocupadas.isEmpty()) {
-            throw new RuntimeException("Ese horario ya está reservado.");
+            throw new HorarioOcupadoException("Ese horario ya está reservado.");
         }
 
         Sesion nueva = new Sesion();
