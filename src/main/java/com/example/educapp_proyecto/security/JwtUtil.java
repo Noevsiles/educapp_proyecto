@@ -15,9 +15,10 @@ public class JwtUtil {
     private final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS512); //clave segura automatica
     private final long EXPIRATION_MS = 86400000; // 1 dia
 
-    public String generarToken(String email) {
+    public String generarToken(String email, String rol) {
         return Jwts.builder()
                 .setSubject(email)
+                .claim("rol", rol)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))
                 .signWith(key, SignatureAlgorithm.HS512)

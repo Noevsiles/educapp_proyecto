@@ -57,7 +57,8 @@ public class AuthController {
             return ResponseEntity.status(401).body("Contraseña incorrecta");
         }
 
-        String token = jwtUtil.generarToken(usuario.getEmail());
+        String rol = usuario.getRoles().iterator().next().getNombre();
+        String token = jwtUtil.generarToken(usuario.getEmail(), rol);
         return ResponseEntity.ok(token);
     }
 
