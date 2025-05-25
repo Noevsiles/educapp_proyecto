@@ -5,12 +5,15 @@ import com.example.educapp_proyecto.dto.ClienteRequestDto;
 import com.example.educapp_proyecto.dto.ClienteResponseDto;
 import com.example.educapp_proyecto.model.Cliente;
 import com.example.educapp_proyecto.repository.EducadorRepository;
+import com.example.educapp_proyecto.security.JwtUtil;
 import com.example.educapp_proyecto.service.impl.ClienteService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -22,11 +25,23 @@ public class ClienteController {
     @Autowired
     private EducadorRepository educadorRepository;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
     // Crear un cliente
     @PostMapping
-    public ResponseEntity<ClienteResponseDto> crearCliente(@RequestBody ClienteRequestDto dto) {
-        ClienteResponseDto nuevoCliente = clienteService.crearClienteDesdeDto(dto);
+    public ResponseEntity<ClienteResponseDto> crearCliente(@RequestBody ClienteRequestDto dto, Principal principal) {
+        String emailEducador = principal.getName();
+        ClienteResponseDto nuevoCliente = clienteService.crearClienteDesdeDto(dto, emailEducador);
         return new ResponseEntity<>(nuevoCliente, HttpStatus.CREATED);
+    }
+
+    // Obtener los clientes asociados a un educador
+    @GetMapping("/educador")
+    public ResponseEntity<List<ClienteResponseDto>> obtenerClientesDelEducador(HttpServletRequest request) {
+        String email = jwtUtil.extraerEmailDesdeRequest(request);
+        List<ClienteResponseDto> clientes = clienteService.obtenerClientesPorEmailEducador(email);
+        return ResponseEntity.ok(clientes);
     }
 
     // Obtener todos los clientes
@@ -68,6 +83,4 @@ public class ClienteController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
-
 }

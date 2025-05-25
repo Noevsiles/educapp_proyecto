@@ -33,23 +33,23 @@ public class ClienteServiceTest {
     @InjectMocks
     private ClienteService clienteService;
 
-    // Test para el metodo de crear cliente desde dto
+    // Test para el método de crear cliente desde dto
     @Test
     void testCrearClienteDesdeDto() {
-        // DTO de entrada
+        // Datos de entrada
+        String emailEducador = "laura@educadora.com";
+
         ClienteRequestDto dto = new ClienteRequestDto();
         dto.setNombre("Lucía");
         dto.setApellidos("Sánchez");
         dto.setEmail("lucia@example.com");
         dto.setTelefono("123456789");
-        dto.setEducadorId(1L);
 
-        // Educador simulado
         Educador educador = new Educador();
         educador.setIdEducador(1L);
         educador.setNombre("Laura");
+        educador.setEmail(emailEducador);
 
-        // Cliente simulado que devolvería el repositorio tras guardar
         Cliente clienteGuardado = new Cliente();
         clienteGuardado.setIdCliente(10L);
         clienteGuardado.setNombre("Lucía");
@@ -58,14 +58,11 @@ public class ClienteServiceTest {
         clienteGuardado.setTelefono("123456789");
         clienteGuardado.setEducador(educador);
 
-        // Mocks
-        when(educadorRepository.findById(1L)).thenReturn(Optional.of(educador));
+        when(educadorRepository.findByEmail(emailEducador)).thenReturn(Optional.of(educador));
         when(clienteRepository.save(any(Cliente.class))).thenReturn(clienteGuardado);
 
-        // Llamada al metodo
-        ClienteResponseDto response = clienteService.crearClienteDesdeDto(dto);
+        ClienteResponseDto response = clienteService.crearClienteDesdeDto(dto, emailEducador);
 
-        // Verificaciones
         assertNotNull(response);
         assertEquals(10L, response.getId());
         assertEquals("Lucía", response.getNombre());
@@ -74,31 +71,27 @@ public class ClienteServiceTest {
         assertEquals("123456789", response.getTelefono());
         assertEquals("Laura", response.getNombreEducador());
 
-        verify(educadorRepository).findById(1L);
+        verify(educadorRepository).findByEmail(emailEducador);
         verify(clienteRepository).save(any(Cliente.class));
     }
 
     // Test para el caso de que el educador no exista
     @Test
     void testCrearClienteDesdeDto_EducadorNoExiste() {
-        // DTO con ID de educador inexistente
+        String emailInexistente = "noexiste@educador.com";
+
         ClienteRequestDto dto = new ClienteRequestDto();
         dto.setNombre("Lucía");
         dto.setApellidos("Sánchez");
         dto.setEmail("lucia@example.com");
         dto.setTelefono("123456789");
-        dto.setEducadorId(99L); // ID que no existe
 
-        // Simular que el educador no existe
-        when(educadorRepository.findById(99L)).thenReturn(Optional.empty());
+        when(educadorRepository.findByEmail(emailInexistente)).thenReturn(Optional.empty());
 
-        // Verificar que se lanza la excepción correcta
         RuntimeException ex = assertThrows(RuntimeException.class, () -> {
-            clienteService.crearClienteDesdeDto(dto);
+            clienteService.crearClienteDesdeDto(dto, emailInexistente);
         });
 
-        // Comprobar el mensaje de error
-        assertThrows(RuntimeException.class, () -> clienteService.crearClienteDesdeDto(dto));
-        org.junit.jupiter.api.Assertions.assertEquals("Educador no encontrado con id: 99", ex.getMessage());
+        assertEquals("Educador no encontrado con email: " + emailInexistente, ex.getMessage());
     }
 }

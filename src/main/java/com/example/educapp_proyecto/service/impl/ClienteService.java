@@ -10,6 +10,7 @@ import com.example.educapp_proyecto.service.ClienteServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,9 +63,9 @@ public class ClienteService implements ClienteServiceInterface {
 
     // Crear un cliente a traves del dto
     @Override
-    public ClienteResponseDto crearClienteDesdeDto(ClienteRequestDto dto) {
-        Educador educador = educadorRepository.findById(dto.getEducadorId())
-                .orElseThrow(() -> new RuntimeException("Educador no encontrado con id: " + dto.getEducadorId()));
+    public ClienteResponseDto crearClienteDesdeDto(ClienteRequestDto dto, String emailEducador) {
+        Educador educador = educadorRepository.findByEmail(emailEducador)
+                .orElseThrow(() -> new RuntimeException("Educador no encontrado con email: " + emailEducador));
 
         Cliente cliente = new Cliente();
         cliente.setNombre(dto.getNombre());
@@ -85,4 +86,27 @@ public class ClienteService implements ClienteServiceInterface {
 
         return response;
     }
+
+    public List<ClienteResponseDto> obtenerClientesPorEmailEducador(String emailEducador) {
+        Educador educador = educadorRepository.findByEmail(emailEducador)
+                .orElseThrow(() -> new RuntimeException("Educador no encontrado con email: " + emailEducador));
+
+        List<Cliente> clientes = clienteRepository.findByEducador(educador);
+        List<ClienteResponseDto> resultado = new ArrayList<>();
+
+        for (Cliente cliente : clientes) {
+            ClienteResponseDto response = new ClienteResponseDto();
+            response.setId(cliente.getIdCliente());
+            response.setNombre(cliente.getNombre());
+            response.setApellidos(cliente.getApellidos());
+            response.setEmail(cliente.getEmail());
+            response.setTelefono(cliente.getTelefono());
+            response.setNombreEducador(educador.getNombre());
+
+            resultado.add(response);
+        }
+
+        return resultado;
+    }
+
 }

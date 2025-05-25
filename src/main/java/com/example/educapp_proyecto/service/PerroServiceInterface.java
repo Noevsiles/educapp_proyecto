@@ -14,4 +14,5 @@ public interface PerroServiceInterface {
     void deleteById(Long id);
     Perro updatePerro(Long id, Perro perro);
     PerroResponseDto crearPerro(PerroRequestDto dto);
+    PerroResponseDto convertirAPerroDto(Perro perro);
 }

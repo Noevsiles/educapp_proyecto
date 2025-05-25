@@ -12,4 +12,5 @@ public class PerroRequestDto {
     private int edad;
     private boolean esterilizado;
     private Long clienteId;
+    private String imagenUrl;
 }

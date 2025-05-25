@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/perros")
@@ -31,9 +32,12 @@ public class PerroController {
 
     // Obtener todos los perros
     @GetMapping
-    public ResponseEntity<List<Perro>> obtenerTodosPerros() {
+    public ResponseEntity<List<PerroResponseDto>> obtenerTodosPerros() {
         List<Perro> perros = perroService.findAll();
-        return new ResponseEntity<>(perros, HttpStatus.OK);
+        List<PerroResponseDto> dtos = perros.stream()
+                .map(perroService::convertirAPerroDto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
     }
 
     // Obtener un perro por su ID

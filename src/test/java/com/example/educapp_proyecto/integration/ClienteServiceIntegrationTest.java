@@ -33,15 +33,30 @@ public class ClienteServiceIntegrationTest {
     // Test para crear cliente desde el dto
     @Test
     void testCrearClienteDesdeDto_Integracion() {
+        // Guardar educador en la base de datos
+        Educador educador = new Educador();
+        educador.setNombre("Laura Educadora");
+        educador.setEmail("laura@educadora.com");
+        educador.setApellidos("Gómez");
+        educador.setTelefono("123123123");
+        educador.setExperiencia(5);
+        educador.setFormacion("Etología canina");
+        educador.setEspecializacion("Conducta");
+        educador.setDescripcion("Especialista en modificación de conducta");
+
+        educador = educadorRepository.save(educador);
+
+        // Crear el cliente DTO
         ClienteRequestDto dto = new ClienteRequestDto();
         dto.setNombre("Mario");
         dto.setApellidos("Ríos");
         dto.setEmail("mario@example.com");
         dto.setTelefono("666999123");
-        dto.setEducadorId(idEducador);
 
-        ClienteResponseDto response = clienteService.crearClienteDesdeDto(dto);
+        // Ejecutar
+        ClienteResponseDto response = clienteService.crearClienteDesdeDto(dto, "laura@educadora.com");
 
+        // Verificar
         assertNotNull(response.getId());
         assertEquals("Mario", response.getNombre());
         assertEquals("Ríos", response.getApellidos());

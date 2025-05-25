@@ -29,6 +29,12 @@ public class EducadorService implements EducadorServiceInterface {
         }
     }
 
+    // Obtener educador por su email
+    @Override
+    public Optional<Educador> findByEmail(String email) {
+        return educadorRepository.findByEmail(email);
+    }
+
     // Guardar educador
     @Override
     public Educador save(Educador educador) {

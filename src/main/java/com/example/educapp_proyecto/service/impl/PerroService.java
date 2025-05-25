@@ -73,18 +73,35 @@ public class PerroService implements PerroServiceInterface {
         perro.setEdad(dto.getEdad());
         perro.setEsterilizado(dto.isEsterilizado());
         perro.setCliente(cliente);
+        perro.setImagenUrl(dto.getImagenUrl());
 
         Perro guardado = perroRepository.save(perro);
 
         PerroResponseDto response = new PerroResponseDto();
-        response.setId(guardado.getIdPerro());
+        response.setIdPerro(guardado.getIdPerro());
         response.setNombre(guardado.getNombre());
         response.setRaza(guardado.getRaza());
         response.setSexo(guardado.getSexo());
         response.setEdad(guardado.getEdad());
         response.setEsterilizado(guardado.isEsterilizado());
         response.setNombreCliente(cliente.getNombre());
+        perro.setImagenUrl(dto.getImagenUrl());
 
         return response;
+    }
+
+    // Convertir Perro en PerroResponseDto
+    @Override
+    public PerroResponseDto convertirAPerroDto(Perro perro) {
+        PerroResponseDto dto = new PerroResponseDto();
+        dto.setIdPerro(perro.getIdPerro());
+        dto.setNombre(perro.getNombre());
+        dto.setRaza(perro.getRaza());
+        dto.setSexo(perro.getSexo());
+        dto.setEdad(perro.getEdad());
+        dto.setEsterilizado(perro.isEsterilizado());
+        dto.setImagenUrl(perro.getImagenUrl());
+        dto.setNombreCliente(perro.getCliente().getNombre());
+        return dto;
     }
 }

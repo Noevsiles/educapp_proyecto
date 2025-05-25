@@ -2,6 +2,7 @@ package com.example.educapp_proyecto.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,5 +33,6 @@ public class Cliente {
 
     @OneToMany(mappedBy = "cliente")
     @JsonIgnore
+    @JsonManagedReference
     private List<Perro> perros;
 }
