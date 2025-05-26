@@ -25,7 +25,8 @@ public class PlanTrabajoController {
 
     @PostMapping
     public ResponseEntity<PlanTrabajo> crear(@RequestBody PlanTrabajoDto dto) {
-        return ResponseEntity.ok(planService.crearPlan(dto));
+        PlanTrabajo plan = planService.crearPlan(dto);
+        return new ResponseEntity<>(plan, HttpStatus.CREATED);
     }
 
     @GetMapping("/cliente/{clienteId}")

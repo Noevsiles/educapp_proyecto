@@ -1,6 +1,8 @@
 package com.example.educapp_proyecto.controller;
 
+import com.example.educapp_proyecto.dto.ActividadDto;
 import com.example.educapp_proyecto.model.Actividad;
+import com.example.educapp_proyecto.repository.ActividadRepository;
 import com.example.educapp_proyecto.service.impl.ActividadService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -8,12 +10,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/actividades")
 public class ActividadController {
     @Autowired
     private ActividadService actividadService;
+
+    @Autowired
+    private ActividadRepository actividadRepository;
 
     // Crear una nueva actividad
     @PostMapping
@@ -72,4 +78,34 @@ public class ActividadController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    // Crear actividad para plan de trabajo
+    @PostMapping("/plan/{idPlan}")
+    public ResponseEntity<Void> crearActividadParaPlan(@PathVariable Long idPlan, @RequestBody ActividadDto dto) {
+        actividadService.crearActividadParaPlan(idPlan, dto);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    // Obtener actividades por plan
+    @GetMapping("/plan/{idPlan}")
+    public ResponseEntity<List<ActividadDto>> obtenerPorPlan(@PathVariable Long idPlan) {
+        List<Actividad> actividades = actividadRepository.findByPlanesTrabajo_Id(idPlan);
+        List<ActividadDto> dtos = actividades.stream()
+                .map(actividadService::convertirADto)
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(dtos);
+    }
+
+    // Marcar actividad como comletada
+    @PutMapping("/{id}/completar")
+    public ResponseEntity<Void> marcarComoCompletada(@PathVariable Long id) {
+        Actividad actividad = actividadRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Actividad no encontrada"));
+
+        actividad.setCompletado(true);
+        actividadRepository.save(actividad);
+
+        return ResponseEntity.ok().build();
+    }
+
 }

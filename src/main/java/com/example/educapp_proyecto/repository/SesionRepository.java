@@ -1,7 +1,9 @@
 package com.example.educapp_proyecto.repository;
 
 
+import com.example.educapp_proyecto.model.Educador;
 import com.example.educapp_proyecto.model.Sesion;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,4 +20,14 @@ public interface SesionRepository extends JpaRepository<Sesion, Long> {
             @Param("inicio") LocalDateTime inicio,
             @Param("fin") LocalDateTime fin
     );
+
+    List<Sesion> findByPerro_Cliente_Educador(Educador educador);
+
+    List<Sesion> findByEducador_IdEducador(Long idEducador);
+
+    boolean existsByEducadorAndFechaHora(Educador educador, LocalDateTime fechaHora);
+
+
+
+
 }

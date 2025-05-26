@@ -1,10 +1,7 @@
 package com.example.educapp_proyecto.service;
 
 
-import com.example.educapp_proyecto.dto.HuecoAgendaCompletoDto;
-import com.example.educapp_proyecto.dto.HuecoAgendaDto;
-import com.example.educapp_proyecto.dto.ReservaSesionDto;
-import com.example.educapp_proyecto.dto.SesionRequestDto;
+import com.example.educapp_proyecto.dto.*;
 import com.example.educapp_proyecto.model.Sesion;
 
 import java.time.LocalDate;
@@ -24,7 +21,7 @@ public interface SesionServiceInterface {
 
     List<HuecoAgendaDto> obtenerHuecosDisponibles(Long idEducador, LocalDate fecha);
 
-    Sesion reservarSesion(ReservaSesionDto reserva);
+    Sesion reservarSesion(ReservaSesionDto reserva, String emailEducador);
 
     List<HuecoAgendaCompletoDto> obtenerAgendaCompleta(Long idEducador, LocalDate fecha);
 
@@ -33,6 +30,10 @@ public interface SesionServiceInterface {
     List<Sesion> filtrarSesiones(Long clienteId, Long perroId, Long educadorId);
 
     void enviarRecordatorios();
+
+    List<SesionResponseDto> obtenerSesionesPorEducador(String emailEducador);
+
+    void aceptarSesion(Long id);
 
 
 

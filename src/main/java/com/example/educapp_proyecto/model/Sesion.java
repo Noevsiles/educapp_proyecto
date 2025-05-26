@@ -23,6 +23,7 @@ public class Sesion {
     private String tipoSesion;
 
     private boolean realizada = false;
+    private boolean aceptada = false;
     private String observaciones;
 
     @ManyToOne

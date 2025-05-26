@@ -1,11 +1,14 @@
 package com.example.educapp_proyecto.controller;
 
 
+import com.example.educapp_proyecto.dto.PerroDetalleDto;
 import com.example.educapp_proyecto.dto.PerroRequestDto;
 import com.example.educapp_proyecto.dto.PerroResponseDto;
 import com.example.educapp_proyecto.model.Perro;
+import com.example.educapp_proyecto.security.JwtUtil;
 import com.example.educapp_proyecto.service.BreedServiceInterface;
 import com.example.educapp_proyecto.service.PerroServiceInterface;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +25,9 @@ public class PerroController {
 
     @Autowired
     private BreedServiceInterface breedService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     // Crear un perro
     @PostMapping
@@ -83,5 +89,29 @@ public class PerroController {
     @GetMapping("/razas/{breed}/imagenes")
     public ResponseEntity<List<String>> getBreedImages(@PathVariable String breed) {
         return ResponseEntity.ok(breedService.getBreedImages(breed));
+    }
+
+    // Obtener los perros asociados al educador
+    @GetMapping("/educador")
+    public ResponseEntity<List<PerroResponseDto>> obtenerPerrosEducador(HttpServletRequest request) {
+        String email = jwtUtil.extraerEmailDesdeRequest(request);
+        List<PerroResponseDto> perros = perroService.obtenerPerrosPorEducador(email);
+        return ResponseEntity.ok(perros);
+    }
+
+    // Asignar problemas a perro
+    @PutMapping("/{id}/problemas")
+    public ResponseEntity<?> asignarProblemas(
+            @PathVariable Long id,
+            @RequestBody List<Long> idsProblemas) {
+        perroService.asignarProblemasA(id, idsProblemas);
+        return ResponseEntity.ok().build();
+    }
+
+    // Obtener perros con problemas
+    @GetMapping("/{id}/detalle")
+    public ResponseEntity<PerroDetalleDto> obtenerDetalle(@PathVariable Long id) {
+        Perro perro = perroService.findById(id);
+        return ResponseEntity.ok(perroService.convertirADetalleDto(perro));
     }
 }

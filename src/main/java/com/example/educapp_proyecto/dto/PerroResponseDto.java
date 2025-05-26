@@ -12,6 +12,7 @@ public class PerroResponseDto {
     private String sexo;
     private int edad;
     private boolean esterilizado;
+    private Long idCliente;
     private String nombreCliente;
     private String imagenUrl;
 

@@ -15,4 +15,7 @@ public interface PlanTrabajoRepository extends JpaRepository<PlanTrabajo, Long> 
             "LEFT JOIN FETCH c.educador " +
             "WHERE pt.cliente.idCliente = :clienteId")
     List<PlanTrabajo> findByClienteIdWithRelations(@Param("clienteId") Long clienteId);
+
+
+    List<PlanTrabajo> findByPerro_IdPerro(Long idPerro);
 }

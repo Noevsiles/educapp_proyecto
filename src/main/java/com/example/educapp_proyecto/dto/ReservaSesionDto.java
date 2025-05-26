@@ -11,6 +11,7 @@ public class ReservaSesionDto {
     private Long idPerro;
     private Long idPlanTrabajo;
     private Long idEducador;
+    private Long idActividad;
     private LocalDateTime fechaHora;
 
 

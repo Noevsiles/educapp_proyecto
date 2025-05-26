@@ -1,16 +1,21 @@
 package com.example.educapp_proyecto.service.impl;
 
-import com.example.educapp_proyecto.dto.PerroRequestDto;
-import com.example.educapp_proyecto.dto.PerroResponseDto;
+import com.example.educapp_proyecto.dto.*;
 import com.example.educapp_proyecto.model.Cliente;
 import com.example.educapp_proyecto.model.Perro;
+import com.example.educapp_proyecto.model.ProblemaDeConducta;
 import com.example.educapp_proyecto.repository.ClienteRepository;
 import com.example.educapp_proyecto.repository.PerroRepository;
+import com.example.educapp_proyecto.repository.ProblemaDeConductaRepository;
 import com.example.educapp_proyecto.service.PerroServiceInterface;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PerroService implements PerroServiceInterface {
@@ -19,6 +24,8 @@ public class PerroService implements PerroServiceInterface {
 
     @Autowired
     ClienteRepository clienteRepository;
+    @Autowired
+    private ProblemaDeConductaRepository problemaDeConductaRepository;
 
 
     @Override
@@ -101,7 +108,91 @@ public class PerroService implements PerroServiceInterface {
         dto.setEdad(perro.getEdad());
         dto.setEsterilizado(perro.isEsterilizado());
         dto.setImagenUrl(perro.getImagenUrl());
+        dto.setIdCliente(perro.getCliente().getIdCliente());
         dto.setNombreCliente(perro.getCliente().getNombre());
         return dto;
     }
+
+    // Obtener los perros asociados al educador
+    @Override
+    public List<PerroResponseDto> obtenerPerrosPorEducador(String emailEducador) {
+        List<Perro> perros = perroRepository.findByCliente_Educador_Email(emailEducador);
+
+        return perros.stream().map(perro -> {
+            PerroResponseDto dto = new PerroResponseDto();
+            dto.setIdPerro(perro.getIdPerro());
+            dto.setNombre(perro.getNombre());
+            dto.setRaza(perro.getRaza());
+            dto.setSexo(perro.getSexo());
+            dto.setEdad(perro.getEdad());
+            dto.setEsterilizado(perro.isEsterilizado());
+            dto.setIdCliente(perro.getCliente().getIdCliente());
+            dto.setNombreCliente(perro.getCliente().getNombre());
+            dto.setImagenUrl(perro.getImagenUrl());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+
+    // Asignar problemas a perro
+    @Override
+    @Transactional
+    public void asignarProblemasA(Long idPerro, List<Long> idProblemas) {
+        Perro perro = perroRepository.findById(idPerro)
+                .orElseThrow(() -> new RuntimeException("Perro no encontrado"));
+
+        List<ProblemaDeConducta> problemas = problemaDeConductaRepository.findAllById(idProblemas);
+        perro.setProblemasDeConducta(new HashSet<>(problemas));
+
+        perroRepository.save(perro);
+    }
+
+    // Convertir perro a dto
+    @Override
+    public PerroDetalleDto convertirADetalleDto(Perro perro) {
+        PerroDetalleDto dto = new PerroDetalleDto();
+        dto.setIdPerro(perro.getIdPerro());
+        dto.setNombre(perro.getNombre());
+        dto.setRaza(perro.getRaza());
+        dto.setEdad(perro.getEdad());
+        dto.setSexo(perro.getSexo());
+        dto.setEsterilizado(perro.isEsterilizado());
+        dto.setImagenUrl(perro.getImagenUrl());
+
+        List<ProblemaConductaDto> problemas = perro.getProblemasDeConducta().stream().map(p -> {
+            ProblemaConductaDto pdto = new ProblemaConductaDto();
+            pdto.setIdProblemaConducta(p.getIdProblema());
+            pdto.setNombre(p.getNombre());
+            pdto.setDescripcion(p.getDescripcion());
+
+            List<SolucionDto> soluciones = p.getSolucionAplicadas().stream().map(s -> {
+                SolucionDto sdto = new SolucionDto();
+                sdto.setIdSolucion(s.getIdSolucionAplicada());
+                sdto.setNombre(s.getSolucion().getNombre());
+                sdto.setDescripcion(s.getSolucion().getDescripcion());
+                return sdto;
+            }).collect(Collectors.toList());
+
+            pdto.setSoluciones(soluciones);
+
+            // ✅ Añadir causas asociadas al problema
+            List<CausaDto> causas = p.getCausaDeProblemas().stream()
+                    .map(causaDeProblema -> {
+                        CausaDto cdto = new CausaDto();
+                        cdto.setIdCausa(causaDeProblema.getCausa().getIdCausa());
+                        cdto.setDescripcion(causaDeProblema.getCausa().getDescripcion());
+                        return cdto;
+                    })
+                    .collect(Collectors.toList());
+
+            pdto.setCausas(causas);
+
+            return pdto;
+        }).collect(Collectors.toList());
+
+        dto.setProblemasDeConducta(problemas);
+
+        return dto;
+    }
+
 }

@@ -47,5 +47,13 @@ public class PlanTrabajo {
     private Set<Actividad> actividades = new HashSet<>();
 
     private String observaciones;
+
+    //Relacion con perro
+    @ManyToOne
+    @JoinColumn(name = "perro_id")
+    private Perro perro;
+
+    private Integer numeroSesiones;
+
 }
 

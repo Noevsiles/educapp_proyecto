@@ -31,4 +31,8 @@ public class SolucionAplicada {
     @OneToMany(mappedBy = "solucionAplicada", cascade = CascadeType.ALL)
     private List<Actividad> actividades;
 
+    @ManyToOne
+    @JoinColumn(name = "id_plan_trabajo")
+    private PlanTrabajo planTrabajo;
+
 }

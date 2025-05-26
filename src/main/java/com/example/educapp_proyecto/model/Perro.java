@@ -7,8 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name="perro")
@@ -33,11 +32,12 @@ public class Perro {
     @JsonBackReference
     private Cliente cliente;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "perro_problemas",
             joinColumns = @JoinColumn(name = "perro_id"),
             inverseJoinColumns = @JoinColumn(name = "problema_id")
     )
-    private List<ProblemaDeConducta> problemasDeConducta = new ArrayList<>();
+    private Set<ProblemaDeConducta> problemasDeConducta;
 }

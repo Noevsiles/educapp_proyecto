@@ -152,7 +152,7 @@ public class SesionServiceTest {
         )).thenReturn(List.of(new Sesion())); // Ya hay sesión en ese horario
 
         RuntimeException ex = assertThrows(RuntimeException.class, () -> {
-            sesionService.reservarSesion(reserva);
+            sesionService.reservarSesion(reserva, "educador@correo.com");
         });
 
         assertEquals("Ese horario ya está reservado.", ex.getMessage());

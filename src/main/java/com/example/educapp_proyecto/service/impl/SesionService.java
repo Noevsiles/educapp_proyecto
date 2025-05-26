@@ -1,9 +1,6 @@
 package com.example.educapp_proyecto.service.impl;
 
-import com.example.educapp_proyecto.dto.HuecoAgendaCompletoDto;
-import com.example.educapp_proyecto.dto.HuecoAgendaDto;
-import com.example.educapp_proyecto.dto.ReservaSesionDto;
-import com.example.educapp_proyecto.dto.SesionRequestDto;
+import com.example.educapp_proyecto.dto.*;
 import com.example.educapp_proyecto.exception.HorarioOcupadoException;
 import com.example.educapp_proyecto.model.*;
 import com.example.educapp_proyecto.repository.*;
@@ -42,6 +39,9 @@ public class SesionService implements SesionServiceInterface {
 
     @Autowired
     private RecordatorioService recordatorioService;
+
+    @Autowired
+    private ActividadRepository actividadRepository;
 
 
     // Crear sesion
@@ -143,41 +143,48 @@ public class SesionService implements SesionServiceInterface {
         return huecos;
     }
 
+    // Reservar una sesion con un educador
     @Override
-    public Sesion reservarSesion(ReservaSesionDto reserva) {
-        // Compruebo si ya hay una sesión en el horario elegido con ese educador
-        List<Sesion> ocupadas = sesionRepository.buscarPorEducadorIdYFechaHoraEntre(
-                reserva.getIdEducador(),
-                reserva.getFechaHora(),
-                reserva.getFechaHora()
-        );
-        if (!ocupadas.isEmpty()) {
-            throw new HorarioOcupadoException("Ese horario ya está reservado.");
-        }
+    public Sesion reservarSesion(ReservaSesionDto dto, String emailEducador) {
+        Educador educador = educadorRepository.findByEmail(emailEducador)
+                .orElseThrow(() -> new RuntimeException("Educador no encontrado con email: " + emailEducador));
 
-        Sesion nueva = new Sesion();
-        nueva.setFechaHora(reserva.getFechaHora());
-        nueva.setTipoSesion("Reserva");
-        nueva.setRealizada(false);
-        nueva.setObservaciones("");
-
-        // Lanzo una excepción si no se encuentra el cliente, el perro, el educador o el plan de trabajo
-        Cliente cliente = clienteRepository.findById(reserva.getIdCliente())
-                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
-        Perro perro = perroRepository.findById(reserva.getIdPerro())
+        Perro perro = perroRepository.findById(dto.getIdPerro())
                 .orElseThrow(() -> new RuntimeException("Perro no encontrado"));
-        Educador educador = educadorRepository.findById(reserva.getIdEducador())
-                .orElseThrow(() -> new RuntimeException("Educador no encontrado"));
-        PlanTrabajo plan = planTrabajoRepository.findById(reserva.getIdPlanTrabajo())
+
+        PlanTrabajo plan = planTrabajoRepository.findById(dto.getIdPlanTrabajo())
                 .orElseThrow(() -> new RuntimeException("Plan de trabajo no encontrado"));
 
-        nueva.setCliente(cliente);
-        nueva.setPerro(perro);
-        nueva.setEducador(educador);
-        nueva.setPlanTrabajo(plan);
+        // Validar que el plan pertenece al cliente del perro
+        if (!plan.getCliente().equals(perro.getCliente())) {
+            throw new RuntimeException("El plan de trabajo no pertenece al cliente del perro");
+        }
 
-        return sesionRepository.save(nueva);
+        // ✅ Verificar si ya hay una sesión en ese horario para ese educador
+        boolean haySolapamiento = sesionRepository.existsByEducadorAndFechaHora(educador, dto.getFechaHora());
+        if (haySolapamiento) {
+            throw new RuntimeException("El educador ya tiene una sesión en ese horario");
+        }
+
+        // Obtener nombre de la primera actividad
+        String tipoSesion = plan.getActividades().isEmpty()
+                ? "Sesión sin actividades definidas"
+                : plan.getActividades().iterator().next().getNombre();
+
+        Sesion sesion = new Sesion();
+        sesion.setEducador(educador);
+        sesion.setCliente(perro.getCliente());
+        sesion.setPerro(perro);
+        sesion.setPlanTrabajo(plan);
+        sesion.setFechaHora(dto.getFechaHora());
+        sesion.setTipoSesion(tipoSesion);
+        sesion.setObservaciones(""); // Puedes cambiarlo si es necesario
+        sesion.setRealizada(false);
+        sesion.setAceptada(false); // Si vas a implementar aceptación
+
+        return sesionRepository.save(sesion);
     }
+
 
     // Obtener la agenda completa de un educador
     @Override
@@ -247,4 +254,32 @@ public class SesionService implements SesionServiceInterface {
             recordatorioService.enviarRecordatorio(sesion);
         }
     }
+
+    // Obtener sesiones del educador
+    @Override
+    public List<SesionResponseDto> obtenerSesionesPorEducador(String emailEducador) {
+        Educador educador = educadorRepository.findByEmail(emailEducador)
+                .orElseThrow(() -> new RuntimeException("Educador no encontrado"));
+        List<Sesion> sesiones = sesionRepository.findByPerro_Cliente_Educador(educador);
+
+        return sesiones.stream().map(sesion -> {
+            SesionResponseDto dto = new SesionResponseDto();
+            dto.setId(sesion.getIdSesion());
+            dto.setNombrePerro(sesion.getPerro().getNombre());
+            dto.setActividad(sesion.getTipoSesion());
+            dto.setFechaHora(sesion.getFechaHora());
+            dto.setRealizada(sesion.isRealizada());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    // Aceptar la sesion que pide el cliente
+    @Override
+    public void aceptarSesion(Long id) {
+        Sesion sesion = sesionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Sesión no encontrada"));
+        sesion.setAceptada(true);
+        sesionRepository.save(sesion);
+    }
+
 }

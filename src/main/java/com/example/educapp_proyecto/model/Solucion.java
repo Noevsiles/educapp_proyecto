@@ -1,5 +1,6 @@
 package com.example.educapp_proyecto.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,8 +25,14 @@ public class Solucion {
     private String requerimientos;
     private String notas;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "solucion")
     private List<SolucionAplicada> solucionAplicadas;
+
+    @ManyToOne
+    @JoinColumn(name = "problema_id")
+    private ProblemaDeConducta problemaDeConducta;
+
 
 }
 

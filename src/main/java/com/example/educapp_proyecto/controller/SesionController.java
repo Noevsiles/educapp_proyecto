@@ -3,8 +3,12 @@ package com.example.educapp_proyecto.controller;
 
 import com.example.educapp_proyecto.dto.ReservaSesionDto;
 import com.example.educapp_proyecto.dto.SesionRequestDto;
+import com.example.educapp_proyecto.dto.SesionResponseDto;
 import com.example.educapp_proyecto.model.Sesion;
+import com.example.educapp_proyecto.repository.SesionRepository;
+import com.example.educapp_proyecto.security.JwtUtil;
 import com.example.educapp_proyecto.service.impl.SesionService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +23,12 @@ public class SesionController {
     @Autowired
     private SesionService sesionService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private SesionRepository sesionRepository;
+
     // Crear una sesión
     @PostMapping
     public ResponseEntity<Sesion> crearSesion(@RequestBody SesionRequestDto dto) {
@@ -32,6 +42,15 @@ public class SesionController {
         List<Sesion> sesiones = sesionService.findAll();
         return new ResponseEntity<>(sesiones, HttpStatus.OK);
     }
+
+    // Obtener sesiones del educador
+    @GetMapping("/educador")
+    public ResponseEntity<List<SesionResponseDto>> obtenerSesionesDelEducador(HttpServletRequest request) {
+        String email = jwtUtil.extraerEmailDesdeRequest(request);
+        List<SesionResponseDto> sesiones = sesionService.obtenerSesionesPorEducador(email);
+        return ResponseEntity.ok(sesiones);
+    }
+
 
     // Obtener una sesión por su ID
     @GetMapping("/{id}")
@@ -68,8 +87,9 @@ public class SesionController {
 
     //Reservar una sesión
     @PostMapping("/reservar")
-    public ResponseEntity<Sesion> reservar(@RequestBody ReservaSesionDto reserva) {
-        Sesion sesion = sesionService.reservarSesion(reserva);
+    public ResponseEntity<Sesion> reservar(@RequestBody ReservaSesionDto dto, HttpServletRequest request) {
+        String email = jwtUtil.extraerEmailDesdeRequest(request);
+        Sesion sesion = sesionService.reservarSesion(dto, email);
         return ResponseEntity.ok(sesion);
     }
 
@@ -98,4 +118,17 @@ public class SesionController {
         return ResponseEntity.ok("Recordatorios enviados correctamente");
     }
 
+    // Obtener agenda del educador
+    @GetMapping("/educador/{id}/agenda")
+    public ResponseEntity<List<Sesion>> obtenerAgenda(@PathVariable Long id) {
+        List<Sesion> sesiones = sesionRepository.findByEducador_IdEducador(id);
+        return ResponseEntity.ok(sesiones);
+    }
+
+    // Aceptar sesion
+    @PutMapping("/{id}/aceptar")
+    public ResponseEntity<Void> aceptarSesion(@PathVariable Long id) {
+        sesionService.aceptarSesion(id);
+        return ResponseEntity.ok().build();
+    }
 }

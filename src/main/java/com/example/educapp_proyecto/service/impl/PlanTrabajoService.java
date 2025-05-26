@@ -1,12 +1,11 @@
 package com.example.educapp_proyecto.service.impl;
 
+import com.example.educapp_proyecto.dto.ActividadDto;
 import com.example.educapp_proyecto.dto.PlanTrabajoDto;
 import com.example.educapp_proyecto.dto.PlanTrabajoRespuestaDto;
+import com.example.educapp_proyecto.dto.SolucionAplicadaRequest;
 import com.example.educapp_proyecto.model.*;
-import com.example.educapp_proyecto.repository.ActividadRepository;
-import com.example.educapp_proyecto.repository.ClienteRepository;
-import com.example.educapp_proyecto.repository.PlanTrabajoRepository;
-import com.example.educapp_proyecto.repository.ProblemaDeConductaRepository;
+import com.example.educapp_proyecto.repository.*;
 import com.example.educapp_proyecto.service.PlanTrabajoServiceInterface;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,49 +20,99 @@ import java.util.stream.Collectors;
 public class PlanTrabajoService implements PlanTrabajoServiceInterface {
 
     @Autowired
+    private PerroRepository perroRepository;
+
+    @Autowired
     private PlanTrabajoRepository planTrabajoRepository;
 
     @Autowired
-    private ClienteRepository clienteRepository;
+    private ActividadRepository actividadRepository;
 
     @Autowired
     private ProblemaDeConductaRepository problemaRepository;
 
     @Autowired
-    private ActividadRepository actividadRepository;
+    private SolucionRepository solucionRepository;
+
+    @Autowired
+    private SolucionAplicadaRepository solucionAplicadaRepository;
+
+    @Autowired
+    private ProblemaDeConductaRepository problemaDeConductaRepository;
+
+    @Autowired
+    private ClienteRepository clienteRepository;
 
     // Crear un plan de trabajo
-    @Override
     @Transactional
+    @Override
     public PlanTrabajo crearPlan(PlanTrabajoDto dto) {
-        // Buscar cliente
         Cliente cliente = clienteRepository.findById(dto.getIdCliente())
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
 
-        // Obtener problemas
-        List<Long> problemaIds = dto.getProblemaIds().stream().distinct().toList();
-        Set<ProblemaDeConducta> problemas = new HashSet<>(problemaRepository.findAllById(problemaIds));
+        Perro perro = perroRepository.findById(dto.getIdPerro())
+                .orElseThrow(() -> new RuntimeException("Perro no encontrado"));
 
-        // Obtener actividades
-        List<Long> actividadIds = dto.getActividadIds().stream().distinct().toList();
-        Set<Actividad> actividades = new HashSet<>(actividadRepository.findAllById(actividadIds));
-
-        // Crear el plan
         PlanTrabajo plan = new PlanTrabajo();
         plan.setCliente(cliente);
+        plan.setPerro(perro); // si tienes esta relación
         plan.setObservaciones(dto.getObservaciones());
-        plan.setProblemas(problemas);
-        plan.setActividades(actividades);
+        plan.setNumeroSesiones(dto.getNumeroSesiones());
 
-        // Enlazar manualmente la relación inversa
-        for (Actividad actividad : actividades) {
-            actividad.getPlanesTrabajo().add(plan);  // IMPORTANTE!
+        // Asociar actividades generales al plan
+        if (dto.getActividadIds() != null && !dto.getActividadIds().isEmpty()) {
+            List<Actividad> actividades = actividadRepository.findAllById(dto.getActividadIds());
+            plan.setActividades(new HashSet<>(actividades));
         }
-        PlanTrabajo planGuardado = planTrabajoRepository.save(plan);
-        actividadRepository.saveAll(actividades);
 
-        return planGuardado;
+        // Asociar problemas generales al plan
+        if (dto.getProblemaIds() != null && !dto.getProblemaIds().isEmpty()) {
+            List<ProblemaDeConducta> problemas = problemaDeConductaRepository.findAllById(dto.getProblemaIds());
+            plan.setProblemas(new HashSet<>(problemas));
+        }
+
+        // Guardar el plan inicialmente
+        planTrabajoRepository.save(plan);
+
+        // Procesar soluciones aplicadas
+        if (dto.getSolucionesAplicadas() != null && !dto.getSolucionesAplicadas().isEmpty()) {
+            for (SolucionAplicadaRequest solReq : dto.getSolucionesAplicadas()) {
+                ProblemaDeConducta problema = problemaDeConductaRepository.findById(solReq.getIdProblemaConducta())
+                        .orElseThrow(() -> new RuntimeException("Problema de conducta no encontrado"));
+
+                Solucion solucion = solucionRepository.findById(solReq.getIdSolucion())
+                        .orElseThrow(() -> new RuntimeException("Solución no encontrada"));
+
+                SolucionAplicada solucionAplicada = new SolucionAplicada();
+                solucionAplicada.setPlanTrabajo(plan);
+                solucionAplicada.setProblemaDeConducta(problema);
+                solucionAplicada.setSolucion(solucion);
+                solucionAplicada.setNumeroDeSesiones(solReq.getNumeroDeSesiones());
+
+                // Actividades asociadas a esta solución
+                if (solReq.getActividades() != null && !solReq.getActividades().isEmpty()) {
+                    List<Actividad> actividades = solReq.getActividades().stream().map(actDto -> {
+                        Actividad actividad = new Actividad();
+                        actividad.setNombre(actDto.getNombre());
+                        actividad.setDescripcion(actDto.getDescripcion());
+                        actividad.setDuracion(actDto.getDuracion());
+                        actividad.setCompletado(actDto.isCompletado());
+                        actividad.setSolucionAplicada(solucionAplicada); // Relación bidireccional
+                        return actividad;
+                    }).collect(Collectors.toList());
+
+                    solucionAplicada.setActividades(actividades);
+                }
+
+                solucionAplicadaRepository.save(solucionAplicada);
+            }
+        }
+
+        // Retornar el plan actualizado con sus relaciones
+        return planTrabajoRepository.findById(plan.getId())
+                .orElseThrow(() -> new RuntimeException("Error al recuperar el plan"));
     }
+
 
     // Convertir el plan de trabajo a DTO
     private PlanTrabajoRespuestaDto convertirAPlanDto(PlanTrabajo plan) {

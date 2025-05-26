@@ -1,17 +1,22 @@
 package com.example.educapp_proyecto.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PlanTrabajoDto {
 
     private Long idCliente;
+    private Long idPerro;
     private List<Long> problemaIds;
     private List<Long> actividadIds;
     private String observaciones;
     private List<String> nombresPerros;
+    private List<Long> idActividades; // opcional
+    private List<SolucionAplicadaRequest> solucionesAplicadas;
+    private Integer numeroSesiones;
+
 }

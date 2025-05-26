@@ -35,4 +35,7 @@ public class ProblemaDeConducta {
     @ManyToMany(mappedBy = "problemasDeConducta")
     private List<Perro> perros = new ArrayList<>();
 
+    @OneToMany(mappedBy = "problemaDeConducta", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Solucion> soluciones;
+
 }

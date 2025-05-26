@@ -1,7 +1,10 @@
 package com.example.educapp_proyecto.controller;
 
 
+import com.example.educapp_proyecto.dto.AsignacionProblemasDto;
+import com.example.educapp_proyecto.dto.ProblemaConductaDto;
 import com.example.educapp_proyecto.model.ProblemaDeConducta;
+import com.example.educapp_proyecto.service.ProblemaDeConductaServiceInterface;
 import com.example.educapp_proyecto.service.impl.ProblemaDeConductaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,10 +14,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/problema-de-conducta")
+@RequestMapping("/api/problemas-de-conducta")
 public class ProblemaDeConductaController {
     @Autowired
     private ProblemaDeConductaService problemaDeConductaService;
+
+
+    @Autowired
+    private ProblemaDeConductaServiceInterface problemaService;
 
     // Crear un problema de conducta
     @PostMapping
@@ -25,8 +32,8 @@ public class ProblemaDeConductaController {
 
     // Obtener todos los problemas de conducta
     @GetMapping
-    public ResponseEntity<List<ProblemaDeConducta>> obtenerTodosProblemasDeConducta() {
-        List<ProblemaDeConducta> problemas = problemaDeConductaService.findAll();
+    public ResponseEntity<List<ProblemaConductaDto>> obtenerTodosProblemasDeConducta() {
+        List<ProblemaConductaDto> problemas = problemaDeConductaService.obtenerTodosSoloIdYNombre();
         return new ResponseEntity<>(problemas, HttpStatus.OK);
     }
 
@@ -62,4 +69,22 @@ public class ProblemaDeConductaController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    // Asignar problemas de conducta a perros
+    @PostMapping("/asignar")
+    public ResponseEntity<Void> asignarProblemas(@RequestBody AsignacionProblemasDto dto) {
+        problemaDeConductaService.asignarProblemasAPerro(dto.getIdPerro(), dto.getIdProblemas());
+        return ResponseEntity.ok().build();
+    }
+
+
+    // Obtener problemas de un perro con soluciones
+    @GetMapping("/por-perro/{idPerro}/con-soluciones")
+    public ResponseEntity<List<ProblemaConductaDto>> getProblemasYSolucionesPorPerro(@PathVariable Long idPerro) {
+        List<ProblemaConductaDto> resultado = problemaDeConductaService.obtenerProblemasYSolucionesDelPerro(idPerro);
+        return ResponseEntity.ok(resultado);
+    }
+
+
+
 }
