@@ -44,7 +44,7 @@ public class SecurityConfig {
                 .cors(cors -> {})
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll() // permitir login y registro
+                        .requestMatchers("/auth/**", "/api/registro/**").permitAll() // permitir login y registro
                         .requestMatchers("/api/sesiones/enviar-recordatorios").hasRole("ADMIN")
                         .requestMatchers("/api/**").authenticated()
                         .anyRequest().permitAll()

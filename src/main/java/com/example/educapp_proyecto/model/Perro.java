@@ -40,4 +40,8 @@ public class Perro {
             inverseJoinColumns = @JoinColumn(name = "problema_id")
     )
     private Set<ProblemaDeConducta> problemasDeConducta;
+
+    @OneToMany(mappedBy = "perro", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<ActividadAsignada> actividadesAsignadas;
 }

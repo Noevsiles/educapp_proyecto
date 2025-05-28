@@ -19,4 +19,5 @@ public interface PerroServiceInterface {
     List<PerroResponseDto> obtenerPerrosPorEducador(String emailEducador);
     void asignarProblemasA(Long idPerro, List<Long> idProblemas);
     PerroDetalleDto convertirADetalleDto(Perro perro);
+    List<PerroResponseDto> obtenerPerrosPorCliente(String emailCliente);
 }

@@ -4,6 +4,7 @@ package com.example.educapp_proyecto.controller;
 import com.example.educapp_proyecto.dto.PerroDetalleDto;
 import com.example.educapp_proyecto.dto.PerroRequestDto;
 import com.example.educapp_proyecto.dto.PerroResponseDto;
+import com.example.educapp_proyecto.model.Cliente;
 import com.example.educapp_proyecto.model.Perro;
 import com.example.educapp_proyecto.security.JwtUtil;
 import com.example.educapp_proyecto.service.BreedServiceInterface;
@@ -114,4 +115,15 @@ public class PerroController {
         Perro perro = perroService.findById(id);
         return ResponseEntity.ok(perroService.convertirADetalleDto(perro));
     }
+
+    // Obtener los perros del cliente (puede tener mas de uno)
+    @GetMapping("/cliente")
+    public ResponseEntity<List<PerroResponseDto>> obtenerPerrosDelCliente(HttpServletRequest request) {
+        String token = request.getHeader("Authorization").replace("Bearer ", "");
+        String emailCliente = jwtUtil.extraerEmail(token);
+        List<PerroResponseDto> perros = perroService.obtenerPerrosPorCliente(emailCliente);
+        return ResponseEntity.ok(perros);
+    }
+
+
 }

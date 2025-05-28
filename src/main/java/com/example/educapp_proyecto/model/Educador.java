@@ -41,4 +41,8 @@ public class Educador {
     @OneToMany(mappedBy = "educador")
     @JsonIgnore
     private List<Sesion> sesiones;
+
+    @OneToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
 }

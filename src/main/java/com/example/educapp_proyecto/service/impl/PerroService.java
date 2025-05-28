@@ -24,6 +24,7 @@ public class PerroService implements PerroServiceInterface {
 
     @Autowired
     ClienteRepository clienteRepository;
+
     @Autowired
     private ProblemaDeConductaRepository problemaDeConductaRepository;
 
@@ -175,7 +176,7 @@ public class PerroService implements PerroServiceInterface {
 
             pdto.setSoluciones(soluciones);
 
-            // ✅ Añadir causas asociadas al problema
+            // Añadir causas asociadas al problema
             List<CausaDto> causas = p.getCausaDeProblemas().stream()
                     .map(causaDeProblema -> {
                         CausaDto cdto = new CausaDto();
@@ -194,5 +195,28 @@ public class PerroService implements PerroServiceInterface {
 
         return dto;
     }
+
+    // Obtener los perros que tiene un cliente (puede tener mas de uno)
+    @Override
+    public List<PerroResponseDto> obtenerPerrosPorCliente(String emailCliente) {
+        Cliente cliente = clienteRepository.findByEmail(emailCliente)
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+
+        return cliente.getPerros().stream().map(perro -> {
+            PerroResponseDto dto = new PerroResponseDto();
+            dto.setIdPerro(perro.getIdPerro());
+            dto.setNombre(perro.getNombre());
+            dto.setRaza(perro.getRaza());
+            dto.setEdad(perro.getEdad());
+            dto.setSexo(perro.getSexo());
+            dto.setEsterilizado(perro.isEsterilizado());
+            dto.setImagenUrl(perro.getImagenUrl());
+            dto.setIdCliente(cliente.getIdCliente());
+            dto.setNombreCliente(cliente.getNombre());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+
 
 }

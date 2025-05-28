@@ -35,4 +35,8 @@ public class Cliente {
     @JsonIgnore
     @JsonManagedReference
     private List<Perro> perros;
+
+    @OneToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
 }

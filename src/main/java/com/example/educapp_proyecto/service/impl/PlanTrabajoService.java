@@ -1,9 +1,6 @@
 package com.example.educapp_proyecto.service.impl;
 
-import com.example.educapp_proyecto.dto.ActividadDto;
-import com.example.educapp_proyecto.dto.PlanTrabajoDto;
-import com.example.educapp_proyecto.dto.PlanTrabajoRespuestaDto;
-import com.example.educapp_proyecto.dto.SolucionAplicadaRequest;
+import com.example.educapp_proyecto.dto.*;
 import com.example.educapp_proyecto.model.*;
 import com.example.educapp_proyecto.repository.*;
 import com.example.educapp_proyecto.service.PlanTrabajoServiceInterface;
@@ -179,5 +176,36 @@ public class PlanTrabajoService implements PlanTrabajoServiceInterface {
     public void eliminarPorId(Long id) {
         planTrabajoRepository.deleteById(id);
     }
+
+    @Override
+    public List<PlanTrabajoClienteDto> obtenerPlanesPorCliente(String emailCliente) {
+        Cliente cliente = clienteRepository.findByEmail(emailCliente)
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+
+        List<PlanTrabajo> planes = planTrabajoRepository.findByPerro_Cliente(cliente);
+
+        return planes.stream().map(plan -> {
+            PlanTrabajoClienteDto dto = new PlanTrabajoClienteDto();
+            dto.setIdPlan(plan.getId());
+            dto.setNombre(plan.getObservaciones());
+
+            // Datos del perro
+            Perro perro = plan.getPerro();
+            dto.setPerro(new PerroMiniDto(perro.getIdPerro(), perro.getNombre()));
+
+            // Problemas de conducta
+            dto.setProblemas(plan.getProblemas().stream()
+                    .map(p -> new ProblemaMiniDto(p.getIdProblema(), p.getNombre()))
+                    .collect(Collectors.toList()));
+
+            // Actividades
+            dto.setActividades(plan.getActividades().stream()
+                    .map(a -> new ActividadMiniDto(a.getIdActividad(), a.getNombre()))
+                    .collect(Collectors.toList()));
+
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
 
 }

@@ -1,11 +1,14 @@
 package com.example.educapp_proyecto.controller;
 
 
+import com.example.educapp_proyecto.dto.PlanTrabajoClienteDto;
 import com.example.educapp_proyecto.dto.PlanTrabajoDto;
 import com.example.educapp_proyecto.dto.PlanTrabajoRespuestaDto;
 import com.example.educapp_proyecto.model.PlanTrabajo;
+import com.example.educapp_proyecto.security.JwtUtil;
 import com.example.educapp_proyecto.service.PlanTrabajoServiceInterface;
 import com.example.educapp_proyecto.service.impl.PlanTrabajoService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +25,10 @@ public class PlanTrabajoController {
 
     @Autowired
     private PlanTrabajoService planTrabajoService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+
 
     @PostMapping
     public ResponseEntity<PlanTrabajo> crear(@RequestBody PlanTrabajoDto dto) {
@@ -60,5 +67,14 @@ public class PlanTrabajoController {
         planTrabajoService.eliminarPorId(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/cliente")
+    public ResponseEntity<List<PlanTrabajoClienteDto>> obtenerPlanesDelCliente(HttpServletRequest request) {
+        String token = request.getHeader("Authorization").replace("Bearer ", "");
+        String emailCliente = jwtUtil.extraerEmail(token);
+        List<PlanTrabajoClienteDto> planes = planTrabajoService.obtenerPlanesPorCliente(emailCliente);
+        return ResponseEntity.ok(planes);
+    }
+
 
 }
