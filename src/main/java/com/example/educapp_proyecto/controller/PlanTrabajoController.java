@@ -31,9 +31,9 @@ public class PlanTrabajoController {
 
 
     @PostMapping
-    public ResponseEntity<PlanTrabajo> crear(@RequestBody PlanTrabajoDto dto) {
-        PlanTrabajo plan = planService.crearPlan(dto);
-        return new ResponseEntity<>(plan, HttpStatus.CREATED);
+    public ResponseEntity<String> crear(@RequestBody PlanTrabajoDto dto) {
+        planTrabajoService.crearPlan(dto);
+        return ResponseEntity.ok("Plan creado con éxito");
     }
 
     @GetMapping("/cliente/{clienteId}")
@@ -75,6 +75,15 @@ public class PlanTrabajoController {
         List<PlanTrabajoClienteDto> planes = planTrabajoService.obtenerPlanesPorCliente(emailCliente);
         return ResponseEntity.ok(planes);
     }
+
+    @GetMapping("/educador")
+    public ResponseEntity<List<PlanTrabajoRespuestaDto>> obtenerPlanesDelEducador(HttpServletRequest request) {
+        String token = request.getHeader("Authorization").replace("Bearer ", "");
+        String emailEducador = jwtUtil.extraerEmail(token);
+        List<PlanTrabajoRespuestaDto> planes = planTrabajoService.obtenerPlanesPorEducador(emailEducador);
+        return ResponseEntity.ok(planes);
+    }
+
 
 
 }

@@ -1,6 +1,7 @@
 package com.example.educapp_proyecto.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -44,6 +45,7 @@ public class PlanTrabajo {
     )
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
+    @JsonManagedReference
     private Set<Actividad> actividades = new HashSet<>();
 
     private String observaciones;

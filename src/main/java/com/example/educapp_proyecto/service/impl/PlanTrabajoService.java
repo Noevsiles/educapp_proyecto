@@ -1,13 +1,17 @@
 package com.example.educapp_proyecto.service.impl;
 
+import com.example.educapp_proyecto.component.PlanTrabajoMapper;
 import com.example.educapp_proyecto.dto.*;
 import com.example.educapp_proyecto.model.*;
 import com.example.educapp_proyecto.repository.*;
 import com.example.educapp_proyecto.service.PlanTrabajoServiceInterface;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
@@ -39,6 +43,13 @@ public class PlanTrabajoService implements PlanTrabajoServiceInterface {
 
     @Autowired
     private ClienteRepository clienteRepository;
+
+    @Autowired
+    private EducadorRepository educadorRepository;
+
+    @Autowired
+    private PlanTrabajoMapper planTrabajoMapper;
+
 
     // Crear un plan de trabajo
     @Transactional
@@ -187,7 +198,7 @@ public class PlanTrabajoService implements PlanTrabajoServiceInterface {
         return planes.stream().map(plan -> {
             PlanTrabajoClienteDto dto = new PlanTrabajoClienteDto();
             dto.setIdPlan(plan.getId());
-            dto.setNombre(plan.getObservaciones());
+            dto.setObservaciones(plan.getObservaciones());
 
             // Datos del perro
             Perro perro = plan.getPerro();
@@ -198,8 +209,14 @@ public class PlanTrabajoService implements PlanTrabajoServiceInterface {
                     .map(p -> new ProblemaMiniDto(p.getIdProblema(), p.getNombre()))
                     .collect(Collectors.toList()));
 
-            // Actividades
-            dto.setActividades(plan.getActividades().stream()
+            // Actividades: combinar las del plan y las de soluciones aplicadas
+            List<Actividad> actividadesDesdeSoluciones = actividadRepository.findByPlanTrabajoIdFromSoluciones(plan.getId());
+
+            Set<Actividad> actividadesTotales = new HashSet<>();
+            actividadesTotales.addAll(plan.getActividades());              // actividades directas
+            actividadesTotales.addAll(actividadesDesdeSoluciones);         // actividades desde soluciones
+
+            dto.setActividades(actividadesTotales.stream()
                     .map(a -> new ActividadMiniDto(a.getIdActividad(), a.getNombre()))
                     .collect(Collectors.toList()));
 
@@ -207,5 +224,25 @@ public class PlanTrabajoService implements PlanTrabajoServiceInterface {
         }).collect(Collectors.toList());
     }
 
+    @Override
+    public List<PlanTrabajoRespuestaDto> obtenerPlanesPorEducador(String emailEducador) {
+        System.out.println("🔍 Buscando educador con email: " + emailEducador);
+
+        Educador educador = educadorRepository.findByUsuarioEmail(emailEducador)
+                .orElseThrow(() -> {
+                    System.out.println("❌ No se encontró el educador con ese email.");
+                    return new RuntimeException("Educador no encontrado");
+                });
+
+        System.out.println("✅ Educador encontrado: " + educador.getNombre());
+
+        List<PlanTrabajo> planes = planTrabajoRepository.findByCliente_Educador(educador);
+
+        System.out.println("📋 Planes encontrados: " + planes.size());
+
+        return planes.stream()
+                .map(planTrabajoMapper::aDtoRespuesta)
+                .collect(Collectors.toList());
+    }
 
 }

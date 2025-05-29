@@ -1,6 +1,7 @@
 package com.example.educapp_proyecto.repository;
 
 import com.example.educapp_proyecto.model.Cliente;
+import com.example.educapp_proyecto.model.Educador;
 import com.example.educapp_proyecto.model.PlanTrabajo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -21,4 +22,6 @@ public interface PlanTrabajoRepository extends JpaRepository<PlanTrabajo, Long> 
     List<PlanTrabajo> findByPerro_IdPerro(Long idPerro);
 
     List<PlanTrabajo> findByPerro_Cliente(Cliente cliente);
+
+    List<PlanTrabajo> findByCliente_Educador(Educador educador);
 }

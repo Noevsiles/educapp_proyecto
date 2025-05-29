@@ -17,4 +17,6 @@ public interface PlanTrabajoServiceInterface  {
     void eliminarPorId(Long id);
 
     List<PlanTrabajoClienteDto> obtenerPlanesPorCliente(String emailCliente);
+
+    List<PlanTrabajoRespuestaDto> obtenerPlanesPorEducador(String emailEducador);
 }

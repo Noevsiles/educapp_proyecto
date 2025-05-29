@@ -15,7 +15,7 @@ public class PlanTrabajoDto {
     private List<Long> actividadIds;
     private String observaciones;
     private List<String> nombresPerros;
-    private List<Long> idActividades; // opcional
+    private List<Long> idActividades;
     private List<SolucionAplicadaRequest> solucionesAplicadas;
     private Integer numeroSesiones;
 

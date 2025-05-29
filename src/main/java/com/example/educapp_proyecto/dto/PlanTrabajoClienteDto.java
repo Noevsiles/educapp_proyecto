@@ -1,12 +1,12 @@
 package com.example.educapp_proyecto.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class PlanTrabajoClienteDto {
     private Long idPlan;
     private String nombre;
