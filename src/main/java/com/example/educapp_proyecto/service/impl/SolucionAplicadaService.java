@@ -17,12 +17,13 @@ public class SolucionAplicadaService implements SolucionAplicadaServiceInterface
 
     private ActividadRepository actividadRepository;
 
-
+    // Encontrar todas las soluciones aplicadas
     @Override
     public List<SolucionAplicada> findAll() {
         return solucionAplicadaRepository.findAll();
     }
 
+    // Encontrar solucion aplicada por email
     @Override
     public SolucionAplicada findById(Long id) {
         Optional<SolucionAplicada> solucionAplicada = solucionAplicadaRepository.findById(id);
@@ -33,11 +34,13 @@ public class SolucionAplicadaService implements SolucionAplicadaServiceInterface
         }
     }
 
+    // Guardar solucion aplicada
     @Override
     public SolucionAplicada save(SolucionAplicada solucionAplicada) {
         return solucionAplicadaRepository.save(solucionAplicada);
     }
 
+    // Eliminar solucion aplicada por id
     @Override
     public void deleteById(Long id) {
         if (solucionAplicadaRepository.existsById(id)) {

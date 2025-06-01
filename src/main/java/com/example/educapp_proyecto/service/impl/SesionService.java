@@ -77,11 +77,13 @@ public class SesionService implements SesionServiceInterface {
         return sesionRepository.save(sesion);
     }
 
+    // Encontrar todas las sesiones
     @Override
     public List<Sesion> findAll() {
         return sesionRepository.findAll();
     }
 
+    // Encontrar sesion por id
     @Override
     public Sesion findById(Long id) {
         Optional<Sesion> sesion = sesionRepository.findById(id);
@@ -92,11 +94,13 @@ public class SesionService implements SesionServiceInterface {
         }
     }
 
+    // Guardar sesion
     @Override
     public Sesion save(Sesion sesion) {
         return sesionRepository.save(sesion);
     }
 
+    // Borrar sesion por id
     @Override
     public void deleteById(Long id) {
         if (sesionRepository.existsById(id)) {
@@ -147,7 +151,6 @@ public class SesionService implements SesionServiceInterface {
 
         return sesionRepository.save(sesion);
     }
-
 
     // Obtener la agenda completa de un educador
     @Override
@@ -242,6 +245,7 @@ public class SesionService implements SesionServiceInterface {
         Sesion sesion = sesionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Sesión no encontrada"));
         sesion.setAceptada(true);
+        sesion.setRechazada(false);
         sesionRepository.save(sesion);
     }
 
@@ -293,7 +297,7 @@ public class SesionService implements SesionServiceInterface {
         Sesion sesion = sesionRepository.findById(idSesion)
                 .orElseThrow(() -> new RuntimeException("Sesión no encontrada"));
         sesion.setRechazada(true);
-        sesion.setAceptada(false); // opcional por consistencia
+        sesion.setAceptada(false);
         Sesion actualizada = sesionRepository.save(sesion);
 
         SesionResponseDto dto = new SesionResponseDto();
@@ -306,6 +310,28 @@ public class SesionService implements SesionServiceInterface {
         dto.setRechazada(actualizada.isRechazada());
         return dto;
     }
+
+    // Obtener la lista de sesiones del cliente
+    @Override
+    public List<SesionClienteResponseDto> obtenerSesionesPorCliente(String emailCliente) {
+        Cliente cliente = clienteRepository.findByEmail(emailCliente)
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
+
+        List<Sesion> sesiones = sesionRepository.findByCliente(cliente);
+
+        return sesiones.stream().map(sesion -> {
+            SesionClienteResponseDto dto = new SesionClienteResponseDto();
+            dto.setId(sesion.getIdSesion());
+            dto.setNombrePerro(sesion.getPerro().getNombre());
+            dto.setActividad(sesion.getTipoSesion());
+            dto.setFechaHora(sesion.getFechaHora());
+            dto.setAceptada(sesion.isAceptada());
+            dto.setRechazada(sesion.isRechazada());
+            dto.setRealizada(sesion.isRealizada());
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
 
 
 

@@ -20,6 +20,7 @@ public class CausaService implements CausaServiceInterface {
         return causaRepository.findAll();
     }
 
+    // Encontrar una causa por su id
     @Override
     public Causa findById(Long id) {
         Optional<Causa> causa = causaRepository.findById(id);
@@ -30,6 +31,7 @@ public class CausaService implements CausaServiceInterface {
         }
     }
 
+    // Guardar una causa
     @Override
     public Causa save(Causa causa) {
         return causaRepository.save(causa);

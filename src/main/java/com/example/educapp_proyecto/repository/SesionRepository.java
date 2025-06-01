@@ -1,6 +1,7 @@
 package com.example.educapp_proyecto.repository;
 
 
+import com.example.educapp_proyecto.model.Cliente;
 import com.example.educapp_proyecto.model.Educador;
 import com.example.educapp_proyecto.model.Sesion;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,6 +35,8 @@ public interface SesionRepository extends JpaRepository<Sesion, Long> {
     List<Sesion> findByEducadorAndFechaRange(@Param("educadorId") Long educadorId,
                                              @Param("start") LocalDateTime start,
                                              @Param("end") LocalDateTime end);
+
+    List<Sesion> findByCliente(Cliente cliente);
 
 
 

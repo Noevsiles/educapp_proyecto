@@ -19,6 +19,7 @@ public class CausaDeProblemaService implements CausaDeProblemaServiceInterface {
         return causaDeProblemaRepository.findAll();
     }
 
+    // Encontrar una causa de problema por su id
     @Override
     public CausaDeProblema findById(Long id) {
         Optional<CausaDeProblema> causaDeProblema = causaDeProblemaRepository.findById(id);
@@ -29,11 +30,13 @@ public class CausaDeProblemaService implements CausaDeProblemaServiceInterface {
         }
     }
 
+    // Guardar una causa de problema
     @Override
     public CausaDeProblema save(CausaDeProblema causaDeProblema) {
         return causaDeProblemaRepository.save(causaDeProblema);
     }
 
+    // Eliminar una causa de problema por su id
     @Override
     public void deleteById(Long id) {
         if (causaDeProblemaRepository.existsById(id)) {

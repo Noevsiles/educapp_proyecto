@@ -32,6 +32,7 @@ public class InformePdfService {
     private ProblemaDeConductaService problemaDeConductaService;
 
 
+    // Generar un informe por perro a través de su id
     public byte[] generarInformePorPerro(Long idPerro) throws Exception {
         var perro = perroRepository.findById(idPerro)
                 .orElseThrow(() -> new RuntimeException("Perro no encontrado"));

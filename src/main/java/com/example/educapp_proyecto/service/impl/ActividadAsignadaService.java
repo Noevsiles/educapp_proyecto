@@ -25,6 +25,8 @@ public class ActividadAsignadaService implements ActividadAsignadaServiceInterfa
     @Autowired
     private PerroRepository perroRepo;
 
+
+    // Asignar actividades al perro
     @Override
     public void asignarActividad(Long actividadId, Long perroId) {
         Actividad actividad = actividadRepo.findById(actividadId)
@@ -41,6 +43,7 @@ public class ActividadAsignadaService implements ActividadAsignadaServiceInterfa
         asignadaRepo.save(asignada);
     }
 
+    // Obtener las actividades del perro por su id
     @Override
     public List<ActividadAsignadaResponseDto> obtenerActividadesPorPerro(Long perroId) {
         Perro perro = perroRepo.findById(perroId).orElseThrow();
@@ -54,6 +57,7 @@ public class ActividadAsignadaService implements ActividadAsignadaServiceInterfa
         }).toList();
     }
 
+    // Marcar una actividad como completada
     @Override
     public void marcarComoCompletada(Long idAsignacion) {
         ActividadAsignada asignada = asignadaRepo.findById(idAsignacion).orElseThrow();

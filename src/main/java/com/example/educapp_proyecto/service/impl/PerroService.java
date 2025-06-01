@@ -29,11 +29,13 @@ public class PerroService implements PerroServiceInterface {
     private ProblemaDeConductaRepository problemaDeConductaRepository;
 
 
+    // Encontrar todos los perros
     @Override
     public List<Perro> findAll() {
         return perroRepository.findAll();
     }
 
+    // Encontrar perro por su id
     @Override
     public Perro findById(Long id) {
         Optional<Perro> perro = perroRepository.findById(id);
@@ -44,11 +46,13 @@ public class PerroService implements PerroServiceInterface {
         }
     }
 
+    // Guardar perro
     @Override
     public Perro save(Perro perro) {
         return perroRepository.save(perro);
     }
 
+    // Eliminar perro por su id
     @Override
     public void deleteById(Long id) {
         if (perroRepository.existsById(id)) {
@@ -231,6 +235,24 @@ public class PerroService implements PerroServiceInterface {
         }).collect(Collectors.toList());
     }
 
+    // Actualizar un perro utilizando el dto
+    @Override
+    public PerroResponseDto actualizarPerroDesdeDto(Long id, PerroRequestDto dto) {
+        Perro perro = perroRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Perro no encontrado"));
 
+        Cliente cliente = clienteRepository.findById(dto.getClienteId())
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
 
+        perro.setNombre(dto.getNombre());
+        perro.setRaza(dto.getRaza());
+        perro.setSexo(dto.getSexo());
+        perro.setEdad(dto.getEdad());
+        perro.setEsterilizado(dto.isEsterilizado());
+        perro.setImagenUrl(dto.getImagenUrl());
+        perro.setCliente(cliente);
+
+        Perro actualizado = perroRepository.save(perro);
+        return convertirAPerroDto(actualizado);
+    }
 }

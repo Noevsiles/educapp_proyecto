@@ -41,11 +41,13 @@ public class ProblemaDeConductaService implements ProblemaDeConductaServiceInter
         }
     }
 
+    // Guardar problema de conducta
     @Override
     public ProblemaDeConducta save(ProblemaDeConducta problemaDeConducta) {
         return problemaDeConductaRepository.save(problemaDeConducta);
     }
 
+    // Borrar problema por id
     @Override
     public void deleteById(Long id) {
         if (problemaDeConductaRepository.existsById(id)) {
@@ -65,6 +67,7 @@ public class ProblemaDeConductaService implements ProblemaDeConductaServiceInter
         }
     }
 
+    // Asignar problemas por el id del perro
     @Override
     @Transactional
     public void asignarProblemasAPerro(Long idPerro, List<Long> idProblemas) {
@@ -148,6 +151,5 @@ public class ProblemaDeConductaService implements ProblemaDeConductaServiceInter
             return dto;
         }).collect(Collectors.toList());
     }
-
 }
 

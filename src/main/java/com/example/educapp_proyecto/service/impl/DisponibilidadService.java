@@ -23,6 +23,7 @@ public class DisponibilidadService implements DisponibilidadServiceInterface {
     @Autowired
     private EducadorRepository educadorRepository;
 
+    // Guardar disponibilidad
     @Override
     public void guardarDisponibilidad(DisponibilidadRequestDto dto, String email) {
         Educador educador = educadorRepository.findByEmail(email)

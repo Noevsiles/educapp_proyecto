@@ -22,6 +22,7 @@ public class RegistroClienteService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    // Registrar cliente por dto
     public void registrarCliente(RegistroClienteDto dto) {
         if (usuarioRepo.existsByEmail(dto.getEmail())) {
             throw new RuntimeException("Ya existe un usuario con ese email");

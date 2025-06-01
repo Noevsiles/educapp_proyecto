@@ -22,11 +22,13 @@ public class ClienteService implements ClienteServiceInterface {
     @Autowired
     private EducadorRepository educadorRepository;
 
+    // Encontrar todos
     @Override
     public List<Cliente> findAll() {
         return clienteRepository.findAll();
     }
 
+    // Encontrar cliente por su id
     @Override
     public Cliente findById(Long id) {
         Optional<Cliente> cliente = clienteRepository.findById(id);
@@ -37,11 +39,14 @@ public class ClienteService implements ClienteServiceInterface {
         }
     }
 
+    // Guardar cliente
     @Override
     public Cliente save(Cliente cliente) {
         return clienteRepository.save(cliente);
     }
 
+
+    // Eliminar cliente por id
     @Override
     public void deleteById(Long id) {
         if (clienteRepository.existsById(id)) {
@@ -52,13 +57,16 @@ public class ClienteService implements ClienteServiceInterface {
     }
 
     // Actualizar un cliente
-    public Cliente updateCliente(Long id, Cliente cliente) {
-        if (clienteRepository.existsById(id)) {
-            cliente.setIdCliente(id);
-            return clienteRepository.save(cliente);
-        } else {
-            throw new RuntimeException("Cliente no encontrado con el id: " + id);
-        }
+    public Cliente updateCliente(Long id, Cliente datosActualizados) {
+        Cliente clienteExistente = findById(id);
+
+        clienteExistente.setNombre(datosActualizados.getNombre());
+        clienteExistente.setApellidos(datosActualizados.getApellidos());
+        clienteExistente.setEmail(datosActualizados.getEmail());
+        clienteExistente.setTelefono(datosActualizados.getTelefono());
+
+        // NO modifica educador
+        return clienteRepository.save(clienteExistente);
     }
 
     // Crear un cliente a traves del dto
@@ -87,6 +95,7 @@ public class ClienteService implements ClienteServiceInterface {
         return response;
     }
 
+    // Obtener los clientes por el email del educador
     public List<ClienteResponseDto> obtenerClientesPorEmailEducador(String emailEducador) {
         Educador educador = educadorRepository.findByEmail(emailEducador)
                 .orElseThrow(() -> new RuntimeException("Educador no encontrado con email: " + emailEducador));
@@ -108,5 +117,12 @@ public class ClienteService implements ClienteServiceInterface {
 
         return resultado;
     }
+
+    // Obtener al cliente por su email
+    public Cliente obtenerClientePorEmail(String email) {
+        return clienteRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado con email: " + email));
+    }
+
 
 }

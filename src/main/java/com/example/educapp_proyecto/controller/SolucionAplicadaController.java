@@ -11,12 +11,21 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/** @author Noelia Vázquez Siles
+ * Controlador REST para la gestión de soluciones aplicadas a problemas de conducta.
+ */
 @RestController
 @RequestMapping("/api/soluciones-aplicadas")
 public class SolucionAplicadaController {
     @Autowired
     private SolucionAplicadaService solucionAplicadaService;
 
+    /**
+     * Crea una nueva solución aplicada.
+     *
+     * @param solucionAplicada Objeto SolucionAplicada a crear.
+     * @return La solución aplicada creada con estado HTTP 201.
+     */
     // Crear una solución aplicada
     @PostMapping
     public ResponseEntity<SolucionAplicada> crearSolucionAplicada(@RequestBody SolucionAplicada solucionAplicada) {
@@ -24,6 +33,11 @@ public class SolucionAplicadaController {
         return new ResponseEntity<>(nuevaSolucionAplicada, HttpStatus.CREATED);
     }
 
+    /**
+     * Obtiene todas las soluciones aplicadas registradas.
+     *
+     * @return Lista de objetos SolucionAplicada.
+     */
     // Obtener todas las soluciones aplicadas
     @GetMapping
     public ResponseEntity<List<SolucionAplicada>> obtenerTodasSolucionesAplicadas() {
@@ -31,6 +45,12 @@ public class SolucionAplicadaController {
         return new ResponseEntity<>(soluciones, HttpStatus.OK);
     }
 
+    /**
+     * Obtiene una solución aplicada por su ID.
+     *
+     * @param id ID de la solución aplicada.
+     * @return Solución encontrada o HTTP 404 si no se encuentra.
+     */
     // Obtener una solución aplicada por su ID
     @GetMapping("/{id}")
     public ResponseEntity<SolucionAplicada> obtenerSolucionAplicadaPorId(@PathVariable Long id) {
@@ -42,6 +62,13 @@ public class SolucionAplicadaController {
         }
     }
 
+    /**
+     * Actualiza una solución aplicada existente.
+     *
+     * @param id                ID de la solución aplicada a actualizar.
+     * @param solucionAplicada  Datos actualizados.
+     * @return Solución actualizada o HTTP 404 si no se encuentra.
+     */
     // Actualizar una solución aplicada
     @PutMapping("/{id}")
     public ResponseEntity<SolucionAplicada> actualizarSolucionAplicada(@PathVariable Long id, @RequestBody SolucionAplicada solucionAplicada) {
@@ -53,6 +80,13 @@ public class SolucionAplicadaController {
         }
     }
 
+    /**
+     * Agrega una nueva actividad a una solución aplicada.
+     *
+     * @param id        ID de la solución aplicada.
+     * @param actividad Objeto Actividad a agregar.
+     * @return Actividad creada con estado HTTP 201 o HTTP 404 si no se encuentra la solución.
+     */
     // Agregar una actividad a una solución aplicada
     @PostMapping("/{id}/actividad")
     public ResponseEntity<Actividad> agregarActividad(@PathVariable Long id, @RequestBody Actividad actividad) {
@@ -64,6 +98,13 @@ public class SolucionAplicadaController {
         }
     }
 
+    /**
+     * Actualiza el progreso de una actividad dentro de una solución aplicada.
+     *
+     * @param id         ID de la actividad.
+     * @param completado Estado de completitud (true o false).
+     * @return HTTP 204 si se actualiza correctamente, o HTTP 404 si no se encuentra.
+     */
     // Actualizar el progreso de una actividad
     @PutMapping("/actividad/{id}")
     public ResponseEntity<Void> actualizarProgreso(@PathVariable Long id, @RequestBody boolean completado) {
@@ -75,6 +116,12 @@ public class SolucionAplicadaController {
         }
     }
 
+    /**
+     * Elimina una solución aplicada por su ID.
+     *
+     * @param id ID de la solución aplicada a eliminar.
+     * @return HTTP 204 si se elimina correctamente, o HTTP 404 si no se encuentra.
+     */
     // Eliminar una solución aplicada
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarSolucionAplicada(@PathVariable Long id) {

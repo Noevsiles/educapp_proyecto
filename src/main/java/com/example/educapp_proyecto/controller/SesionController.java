@@ -1,10 +1,7 @@
 package com.example.educapp_proyecto.controller;
 
 
-import com.example.educapp_proyecto.dto.HuecoAgendaDto;
-import com.example.educapp_proyecto.dto.ReservaSesionDto;
-import com.example.educapp_proyecto.dto.SesionRequestDto;
-import com.example.educapp_proyecto.dto.SesionResponseDto;
+import com.example.educapp_proyecto.dto.*;
 import com.example.educapp_proyecto.model.DiaSemana;
 import com.example.educapp_proyecto.model.Sesion;
 import com.example.educapp_proyecto.repository.SesionRepository;
@@ -19,6 +16,10 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * @author Noelia Vázquez Siles
+ * Controlador REST para la gestión de sesiones de adiestramiento.
+ */
 @RestController
 @RequestMapping("/api/sesiones")
 public class SesionController {
@@ -32,6 +33,12 @@ public class SesionController {
     @Autowired
     private SesionRepository sesionRepository;
 
+    /**
+     * Crea una nueva sesión.
+     *
+     * @param dto DTO con los datos de la sesión.
+     * @return Sesión creada con estado HTTP 201.
+     */
     // Crear una sesión
     @PostMapping
     public ResponseEntity<Sesion> crearSesion(@RequestBody SesionRequestDto dto) {
@@ -39,6 +46,11 @@ public class SesionController {
         return new ResponseEntity<>(nueva, HttpStatus.CREATED);
     }
 
+    /**
+     * Obtiene todas las sesiones registradas.
+     *
+     * @return Lista completa de sesiones.
+     */
     // Obtener todas las sesiones
     @GetMapping
     public ResponseEntity<List<Sesion>> obtenerTodasLasSesiones() {
@@ -46,6 +58,12 @@ public class SesionController {
         return new ResponseEntity<>(sesiones, HttpStatus.OK);
     }
 
+    /**
+     * Obtiene las sesiones asociadas al educador autenticado.
+     *
+     * @param request Petición HTTP con el token.
+     * @return Lista de sesiones del educador.
+     */
     // Obtener sesiones del educador
     @GetMapping("/educador")
     public ResponseEntity<List<SesionResponseDto>> obtenerSesionesDelEducador(HttpServletRequest request) {
@@ -55,6 +73,12 @@ public class SesionController {
     }
 
 
+    /**
+     * Obtiene una sesión por su ID.
+     *
+     * @param id ID de la sesión.
+     * @return Sesión correspondiente o estado 404 si no se encuentra.
+     */
     // Obtener una sesión por su ID
     @GetMapping("/{id}")
     public ResponseEntity<Sesion> obtenerSesionPorId(@PathVariable Long id) {
@@ -66,6 +90,13 @@ public class SesionController {
         }
     }
 
+    /**
+     * Actualiza una sesión existente.
+     *
+     * @param id     ID de la sesión.
+     * @param sesion Objeto con los nuevos datos.
+     * @return Sesión actualizada o estado 404 si no se encuentra.
+     */
     // Actualizar una sesión
     @PutMapping("/{id}")
     public ResponseEntity<Sesion> actualizarSesion(@PathVariable Long id, @RequestBody Sesion sesion) {
@@ -77,6 +108,12 @@ public class SesionController {
         }
     }
 
+    /**
+     * Elimina una sesión por su ID.
+     *
+     * @param id ID de la sesión.
+     * @return HTTP 204 si se elimina correctamente, o 404 si no se encuentra.
+     */
     // Eliminar una sesión
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarSesion(@PathVariable Long id) {
@@ -88,6 +125,13 @@ public class SesionController {
         }
     }
 
+    /**
+     * Reserva una sesión desde la interfaz del cliente.
+     *
+     * @param dto     Datos para la reserva.
+     * @param request Petición HTTP con token del cliente.
+     * @return Sesión reservada.
+     */
     //Reservar una sesión
     @PostMapping("/reservar")
     public ResponseEntity<Sesion> reservar(@RequestBody ReservaSesionDto dto, HttpServletRequest request) {
@@ -96,6 +140,12 @@ public class SesionController {
         return ResponseEntity.ok(sesion);
     }
 
+    /**
+     * Marca una sesión como realizada.
+     *
+     * @param id ID de la sesión.
+     * @return Sesión actualizada como realizada.
+     */
     //Marcar sesion como realizada
     @PatchMapping("/{id}/realizar")
     public ResponseEntity<Sesion> marcarSesionComoRealizada(@PathVariable Long id) {
@@ -103,6 +153,14 @@ public class SesionController {
         return ResponseEntity.ok(sesionActualizada);
     }
 
+    /**
+     * Filtra sesiones por cliente, perro o educador.
+     *
+     * @param clienteId  ID del cliente (opcional).
+     * @param perroId    ID del perro (opcional).
+     * @param educadorId ID del educador (opcional).
+     * @return Lista de sesiones filtradas.
+     */
     //Filtrar las sesiones por cliente, perro o educador
     @GetMapping("/filtrar")
     public ResponseEntity<List<Sesion>> filtrarSesiones(
@@ -114,6 +172,11 @@ public class SesionController {
         return ResponseEntity.ok(resultado);
     }
 
+    /**
+     * Envía recordatorios por email para las sesiones próximas.
+     *
+     * @return Mensaje de confirmación.
+     */
     //Enviar recordatorios de sesiones
     @PostMapping("/enviar-recordatorios")
     public ResponseEntity<String> enviarRecordatorios() {
@@ -121,6 +184,12 @@ public class SesionController {
         return ResponseEntity.ok("Recordatorios enviados correctamente");
     }
 
+    /**
+     * Obtiene la agenda completa de un educador.
+     *
+     * @param id ID del educador.
+     * @return Lista de sesiones agendadas.
+     */
     // Obtener agenda del educador
     @GetMapping("/educador/{id}/agenda")
     public ResponseEntity<List<Sesion>> obtenerAgenda(@PathVariable Long id) {
@@ -128,6 +197,12 @@ public class SesionController {
         return ResponseEntity.ok(sesiones);
     }
 
+    /**
+     * Acepta una sesión pendiente.
+     *
+     * @param id ID de la sesión.
+     * @return HTTP 200 si se acepta correctamente.
+     */
     // Aceptar sesion
     @PutMapping("/{id}/aceptar")
     public ResponseEntity<Void> aceptarSesion(@PathVariable Long id) {
@@ -135,6 +210,12 @@ public class SesionController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Rechaza una sesión pendiente.
+     *
+     * @param id ID de la sesión.
+     * @return DTO con la sesión rechazada.
+     */
     // Rechazar sesion
     @PutMapping("/{id}/rechazar")
     public ResponseEntity<SesionResponseDto> rechazarSesion(@PathVariable Long id) {
@@ -142,6 +223,13 @@ public class SesionController {
     }
 
 
+    /**
+     * Obtiene los huecos disponibles en la agenda de un educador para una fecha específica.
+     *
+     * @param educadorId ID del educador.
+     * @param fecha      Fecha en formato YYYY-MM-DD.
+     * @return Lista de horas disponibles.
+     */
     // Obtener disponibilidad del educador
     @GetMapping("/disponibles")
     public ResponseEntity<List<String>> obtenerDisponibilidad(
@@ -154,5 +242,17 @@ public class SesionController {
         return ResponseEntity.ok(disponibles);
     }
 
-
+    /**
+     * Obtiene las sesiones del cliente autenticado.
+     *
+     * @param request Petición HTTP con token del cliente.
+     * @return Lista de sesiones en formato DTO.
+     */
+    // Obtener las sesiones del cliente
+    @GetMapping("/cliente")
+    public ResponseEntity<List<SesionClienteResponseDto>> obtenerSesionesDelCliente(HttpServletRequest request) {
+        String email = jwtUtil.extraerEmailDesdeRequest(request);
+        List<SesionClienteResponseDto> sesiones = sesionService.obtenerSesionesPorCliente(email);
+        return ResponseEntity.ok(sesiones);
+    }
 }

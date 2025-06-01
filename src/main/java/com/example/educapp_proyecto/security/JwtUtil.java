@@ -20,7 +20,7 @@ public class JwtUtil {
 
     public String generarToken(String email, String nombre, String rol) {
         return Jwts.builder()
-                .setHeaderParam("typ", "JWT")
+                .setHeaderParam("typ", "JWT") // para poder ver tildes y acentos
                 .setSubject(email)
                 .claim("nombre", nombre)
                 .claim("rol", rol)

@@ -13,16 +13,26 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * @author Noelia Vázquez Siles
+ * Controlador REST para la gestión de problemas de conducta en perros.
+ */
 @RestController
 @RequestMapping("/api/problemas-de-conducta")
 public class ProblemaDeConductaController {
+
     @Autowired
     private ProblemaDeConductaService problemaDeConductaService;
-
 
     @Autowired
     private ProblemaDeConductaServiceInterface problemaService;
 
+    /**
+     * Crea un nuevo problema de conducta.
+     *
+     * @param problemaDeConducta Objeto {@link ProblemaDeConducta} con los datos del nuevo problema.
+     * @return Problema creado con estado HTTP 201.
+     */
     // Crear un problema de conducta
     @PostMapping
     public ResponseEntity<ProblemaDeConducta> crearProblemaDeConducta(@RequestBody ProblemaDeConducta problemaDeConducta) {
@@ -30,6 +40,11 @@ public class ProblemaDeConductaController {
         return new ResponseEntity<>(nuevoProblemaDeConducta, HttpStatus.CREATED);
     }
 
+    /**
+     * Obtiene todos los problemas de conducta, mostrando solo ID y nombre.
+     *
+     * @return Lista de problemas en formato {@link ProblemaConductaDto}.
+     */
     // Obtener todos los problemas de conducta
     @GetMapping
     public ResponseEntity<List<ProblemaConductaDto>> obtenerTodosProblemasDeConducta() {
@@ -37,6 +52,12 @@ public class ProblemaDeConductaController {
         return new ResponseEntity<>(problemas, HttpStatus.OK);
     }
 
+    /**
+     * Obtiene un problema de conducta por su ID.
+     *
+     * @param id ID del problema a buscar.
+     * @return Problema encontrado o HTTP 404 si no existe.
+     */
     // Obtener un problema de conducta por su ID
     @GetMapping("/{id}")
     public ResponseEntity<ProblemaDeConducta> obtenerProblemaDeConductaPorId(@PathVariable Long id) {
@@ -48,6 +69,13 @@ public class ProblemaDeConductaController {
         }
     }
 
+    /**
+     * Actualiza un problema de conducta existente.
+     *
+     * @param id                 ID del problema a actualizar.
+     * @param problemaDeConducta datos del problema.
+     * @return Problema actualizado o HTTP 404 si no existe.
+     */
     // Actualizar un problema de conducta
     @PutMapping("/{id}")
     public ResponseEntity<ProblemaDeConducta> actualizarProblemaDeConducta(@PathVariable Long id, @RequestBody ProblemaDeConducta problemaDeConducta) {
@@ -59,6 +87,12 @@ public class ProblemaDeConductaController {
         }
     }
 
+    /**
+     * Elimina un problema de conducta por su ID.
+     *
+     * @param id ID del problema a eliminar.
+     * @return HTTP 204 si se elimina correctamente, o 404 si no se encuentra.
+     */
     // Eliminar un problema de conducta
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarProblemaDeConducta(@PathVariable Long id) {
@@ -70,6 +104,12 @@ public class ProblemaDeConductaController {
         }
     }
 
+    /**
+     * Asigna una lista de problemas de conducta a un perro específico.
+     *
+     * @param dto DTO con el ID del perro y la lista de IDs de problemas a asignar.
+     * @return HTTP 200 si la asignación se realiza correctamente.
+     */
     // Asignar problemas de conducta a perros
     @PostMapping("/asignar")
     public ResponseEntity<Void> asignarProblemas(@RequestBody AsignacionProblemasDto dto) {
@@ -78,13 +118,16 @@ public class ProblemaDeConductaController {
     }
 
 
+    /**
+     * Obtiene los problemas de conducta asignados a un perro, incluyendo las soluciones aplicables.
+     *
+     * @param idPerro ID del perro.
+     * @return Lista de problemas con soluciones asociadas.
+     */
     // Obtener problemas de un perro con soluciones
     @GetMapping("/por-perro/{idPerro}/con-soluciones")
     public ResponseEntity<List<ProblemaConductaDto>> getProblemasYSolucionesPorPerro(@PathVariable Long idPerro) {
         List<ProblemaConductaDto> resultado = problemaDeConductaService.obtenerProblemasYSolucionesDelPerro(idPerro);
         return ResponseEntity.ok(resultado);
     }
-
-
-
 }

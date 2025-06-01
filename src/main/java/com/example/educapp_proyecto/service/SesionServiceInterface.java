@@ -38,6 +38,8 @@ public interface SesionServiceInterface {
 
     SesionResponseDto  rechazarSesion(Long idSesion);
 
+    List<SesionClienteResponseDto> obtenerSesionesPorCliente(String emailCliente);
+
 
 
 

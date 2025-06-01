@@ -32,11 +32,13 @@ public class ActividadService implements ActividadServiceInterface {
         return actividad.orElseThrow(() -> new RuntimeException("Actividad no encontrada con el id: " + id));
     }
 
+    // Guarar una actividad
     @Override
     public Actividad save(Actividad actividad) {
         return actividadRepository.save(actividad);
     }
 
+    // Eliminar una actividad por su id
     @Override
     public void deleteById(Long id) {
         if (actividadRepository.existsById(id)) {
@@ -46,6 +48,7 @@ public class ActividadService implements ActividadServiceInterface {
         }
     }
 
+    // Actualizar el estado de una activiadad (completada o no)
     @Override
     public Actividad actualizarEstadoActividad(Long id, boolean completado) {
         Actividad actividad = actividadRepository.findById(id)
@@ -92,6 +95,4 @@ public class ActividadService implements ActividadServiceInterface {
         dto.setCompletado(actividad.isCompletado());
         return dto;
     }
-
-
 }

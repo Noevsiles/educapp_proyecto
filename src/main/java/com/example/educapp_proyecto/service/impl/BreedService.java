@@ -19,6 +19,7 @@ public class BreedService implements BreedServiceInterface {
         this.restTemplate = restTemplate;
     }
 
+    // Obtener todas las razas de la api dog.ceo
     @Override
     public List<String> getAllBreeds() {
         String url = "https://dog.ceo/api/breeds/list/all";
@@ -39,6 +40,7 @@ public class BreedService implements BreedServiceInterface {
         return allBreeds;
     }
 
+    // Obtener todas las imagenes asociadas a las razas de dog.ceo
     @Override
     public List<String> getBreedImages(String breedName) {
         // manejar subrazas si vienen en formato "sub breed"

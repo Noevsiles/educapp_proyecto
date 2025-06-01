@@ -14,4 +14,5 @@ public interface TarifaServiceInterface {
     Tarifa save(Tarifa tarifa);
 
     void deleteById(Long id);
+
 }

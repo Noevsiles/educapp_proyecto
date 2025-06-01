@@ -188,6 +188,7 @@ public class PlanTrabajoService implements PlanTrabajoServiceInterface {
         planTrabajoRepository.deleteById(id);
     }
 
+    // Obtener los planes de trabajo por cliente
     @Override
     public List<PlanTrabajoClienteDto> obtenerPlanesPorCliente(String emailCliente) {
         Cliente cliente = clienteRepository.findByEmail(emailCliente)
@@ -224,21 +225,22 @@ public class PlanTrabajoService implements PlanTrabajoServiceInterface {
         }).collect(Collectors.toList());
     }
 
+    // Obtener los planes de trabajo por el educador
     @Override
     public List<PlanTrabajoRespuestaDto> obtenerPlanesPorEducador(String emailEducador) {
-        System.out.println("🔍 Buscando educador con email: " + emailEducador);
+        System.out.println("Buscando educador con email: " + emailEducador);
 
         Educador educador = educadorRepository.findByUsuarioEmail(emailEducador)
                 .orElseThrow(() -> {
-                    System.out.println("❌ No se encontró el educador con ese email.");
+                    System.out.println("No se encontró el educador con ese email.");
                     return new RuntimeException("Educador no encontrado");
                 });
 
-        System.out.println("✅ Educador encontrado: " + educador.getNombre());
+        System.out.println("Educador encontrado: " + educador.getNombre());
 
         List<PlanTrabajo> planes = planTrabajoRepository.findByCliente_Educador(educador);
 
-        System.out.println("📋 Planes encontrados: " + planes.size());
+        System.out.println("Planes encontrados: " + planes.size());
 
         return planes.stream()
                 .map(planTrabajoMapper::aDtoRespuesta)

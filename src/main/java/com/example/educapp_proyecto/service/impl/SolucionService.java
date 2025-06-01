@@ -13,6 +13,7 @@ public class SolucionService implements SolucionServiceInterface {
     @Autowired
     private SolucionRepository solucionRepository;
 
+    // Encontrar todas las soluciones
     @Override
     public List<Solucion> findAll() {
         return solucionRepository.findAll();
@@ -29,6 +30,7 @@ public class SolucionService implements SolucionServiceInterface {
         }
     }
 
+    // Guardar soluciones
     @Override
     public Solucion save(Solucion solucion) {
         return solucionRepository.save(solucion);

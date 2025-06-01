@@ -10,12 +10,21 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/** @author Noelia Vázquez Siles
+ * Controlador REST para la gestión de soluciones que pueden aplicarse a problemas de conducta.
+ */
 @RestController
 @RequestMapping("/api/soluciones")
 public class SolucionController {
     @Autowired
     private SolucionService solucionService;
 
+    /**
+     * Crea una nueva solución.
+     *
+     * @param solucion Objeto Solucion con los datos a registrar.
+     * @return La solución creada con estado HTTP 201.
+     */
     // Crear una solución
     @PostMapping
     public ResponseEntity<Solucion> crearSolucion(@RequestBody Solucion solucion) {
@@ -23,6 +32,11 @@ public class SolucionController {
         return new ResponseEntity<>(nuevaSolucion, HttpStatus.CREATED);
     }
 
+    /**
+     * Obtiene todas las soluciones disponibles.
+     *
+     * @return Lista de objetos {@link Solucion} con estado HTTP 200.
+     */
     // Obtener todas las soluciones
     @GetMapping
     public ResponseEntity<List<Solucion>> obtenerTodasLasSoluciones() {
@@ -30,6 +44,12 @@ public class SolucionController {
         return new ResponseEntity<>(soluciones, HttpStatus.OK);
     }
 
+    /**
+     * Obtiene una solución específica por su ID.
+     *
+     * @param id ID de la solución.
+     * @return Solución correspondiente o estado HTTP 404 si no se encuentra.
+     */
     // Obtener una solución por su ID
     @GetMapping("/{id}")
     public ResponseEntity<Solucion> obtenerSolucionPorId(@PathVariable Long id) {
@@ -41,6 +61,13 @@ public class SolucionController {
         }
     }
 
+    /**
+     * Actualiza una solución existente.
+     *
+     * @param id       ID de la solución a actualizar.
+     * @param solucion Datos nuevos para actualizar.
+     * @return Solución actualizada o estado HTTP 404 si no se encuentra.
+     */
     // Actualizar una solución
     @PutMapping("/{id}")
     public ResponseEntity<Solucion> actualizarSolucion(@PathVariable Long id, @RequestBody Solucion solucion) {
@@ -52,6 +79,12 @@ public class SolucionController {
         }
     }
 
+    /**
+     * Elimina una solución por su ID.
+     *
+     * @param id ID de la solución a eliminar.
+     * @return HTTP 204 si se elimina correctamente, o HTTP 404 si no existe.
+     */
     // Eliminar una solución
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarSolucion(@PathVariable Long id) {

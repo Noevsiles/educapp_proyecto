@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
+/** @author Noelia Vázquez Sies
+ * Controlador REST para gestionar la agenda de un educador,
+ * incluyendo la consulta de huecos disponibles y la agenda completa.
+ */
 @RestController
 @RequestMapping("/api/educadores/{idEducador}/agenda")
 public class AgendaController {
@@ -19,6 +23,13 @@ public class AgendaController {
     @Autowired
     private SesionServiceInterface sesionService;
 
+    /**
+     * Obtiene los huecos disponibles en la agenda de un educador para una fecha concreta.
+     *
+     * @param educadorId ID del educador.
+     * @param fecha Fecha en formato yyyy-MM-dd para consultar la disponibilidad.
+     * @return Lista de cadenas con las horas disponibles en formato "HH:mm".
+     */
     // Obtener huecos disponibles de la agenda
     @GetMapping("/disponibles")
     public ResponseEntity<List<String>> obtenerDisponibilidad(
@@ -31,7 +42,13 @@ public class AgendaController {
         return ResponseEntity.ok(disponibles);
     }
 
-
+    /**
+     * Obtiene la agenda completa del educador para una fecha específica, incluyendo huecos ocupados y libres.
+     *
+     * @param idEducador ID del educador.
+     * @param fecha Fecha para la que se desea consultar la agenda.
+     * @return Lista de objetos {@link HuecoAgendaCompletoDto} representando el estado de cada hueco horario.
+     */
     // Obtener la agenda completa del adiestrador
     @GetMapping("/completa")
     public List<HuecoAgendaCompletoDto> obtenerAgendaCompleta(
