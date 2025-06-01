@@ -95,6 +95,10 @@ public class PerroService implements PerroServiceInterface {
         response.setNombreCliente(cliente.getNombre());
         perro.setImagenUrl(dto.getImagenUrl());
 
+        if (cliente.getEducador() != null) {
+            response.setIdEducador(cliente.getEducador().getIdEducador());
+        }
+
         return response;
     }
 
@@ -111,6 +115,11 @@ public class PerroService implements PerroServiceInterface {
         dto.setImagenUrl(perro.getImagenUrl());
         dto.setIdCliente(perro.getCliente().getIdCliente());
         dto.setNombreCliente(perro.getCliente().getNombre());
+
+        if (perro.getCliente() != null && perro.getCliente().getEducador() != null) {
+            dto.setIdEducador(perro.getCliente().getEducador().getIdEducador());
+        }
+
         return dto;
     }
 
@@ -213,6 +222,11 @@ public class PerroService implements PerroServiceInterface {
             dto.setImagenUrl(perro.getImagenUrl());
             dto.setIdCliente(cliente.getIdCliente());
             dto.setNombreCliente(cliente.getNombre());
+
+            if (cliente.getEducador() != null) {
+                dto.setIdEducador(cliente.getEducador().getIdEducador());
+            }
+
             return dto;
         }).collect(Collectors.toList());
     }

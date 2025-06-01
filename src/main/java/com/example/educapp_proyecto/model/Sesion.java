@@ -24,6 +24,7 @@ public class Sesion {
 
     private boolean realizada = false;
     private boolean aceptada = false;
+    private boolean rechazada = false;
     private String observaciones;
 
     @ManyToOne
@@ -39,7 +40,7 @@ public class Sesion {
     private Perro perro;
 
     @ManyToOne
-    @JoinColumn(name = "plan_trabajo_id")
+    @JoinColumn(name = "plan_trabajo_id", nullable = true)
     private PlanTrabajo planTrabajo;
 
 }

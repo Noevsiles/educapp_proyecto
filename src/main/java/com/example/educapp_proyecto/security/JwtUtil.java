@@ -18,9 +18,11 @@ public class JwtUtil {
     private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
     private final long EXPIRATION_MS = 86400000; // 1 dia
 
-    public String generarToken(String email, String rol) {
+    public String generarToken(String email, String nombre, String rol) {
         return Jwts.builder()
+                .setHeaderParam("typ", "JWT")
                 .setSubject(email)
+                .claim("nombre", nombre)
                 .claim("rol", rol)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_MS))

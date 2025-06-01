@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,6 +27,15 @@ public interface SesionRepository extends JpaRepository<Sesion, Long> {
     List<Sesion> findByEducador_IdEducador(Long idEducador);
 
     boolean existsByEducadorAndFechaHora(Educador educador, LocalDateTime fechaHora);
+
+    //List<Sesion> findByEducador_IdEducadorAndFecha(Long educadorId, LocalDate fecha);
+
+    @Query("SELECT s FROM Sesion s WHERE s.educador.idEducador = :educadorId AND s.fechaHora BETWEEN :start AND :end")
+    List<Sesion> findByEducadorAndFechaRange(@Param("educadorId") Long educadorId,
+                                             @Param("start") LocalDateTime start,
+                                             @Param("end") LocalDateTime end);
+
+
 
 
 

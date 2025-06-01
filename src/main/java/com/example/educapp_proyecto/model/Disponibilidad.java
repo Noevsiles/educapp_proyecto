@@ -23,9 +23,9 @@ public class Disponibilidad {
     @JoinColumn(name = "educador_id", nullable = false)
     private Educador educador;
 
-    @Column(name = "dia_semana")
-    @Enumerated(EnumType.ORDINAL)
-    private DayOfWeek diaSemana;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "dia_semana", length = 20)
+    private DiaSemana diaSemana;
     private LocalTime horaInicio;
     private LocalTime horaFin;
 }

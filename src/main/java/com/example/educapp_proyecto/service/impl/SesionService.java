@@ -10,11 +10,10 @@ import org.springframework.stereotype.Service;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalTime;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class SesionService implements SesionServiceInterface {
@@ -73,7 +72,7 @@ public class SesionService implements SesionServiceInterface {
         sesion.setCliente(cliente);
         sesion.setEducador(educador);
         sesion.setPerro(perro);
-        sesion.setPlanTrabajo(plan);
+        sesion.setPlanTrabajo(plan); // puede ser null
 
         return sesionRepository.save(sesion);
     }
@@ -107,80 +106,44 @@ public class SesionService implements SesionServiceInterface {
         }
     }
 
-    // Obtener los huecos disponibles para las sesiones
-    @Override
-    public List<HuecoAgendaDto> obtenerHuecosDisponibles(Long idEducador, LocalDate fecha) {
-        DayOfWeek diaSemana = fecha.getDayOfWeek();
-
-        // Busca directamente la disponibilidad para el día y educador
-        List<Disponibilidad> disponibilidades = disponibilidadRepository.buscarPorEducadorYDia(idEducador, diaSemana);
-        if (disponibilidades.isEmpty()) {
-            return Collections.emptyList();
-        }
-
-        Disponibilidad disp = disponibilidades.get(0);
-        LocalDateTime inicio = fecha.atTime(disp.getHoraInicio());
-        LocalDateTime fin = fecha.atTime(disp.getHoraFin());
-
-        List<Sesion> sesionesReservadas = sesionRepository
-                .buscarPorEducadorIdYFechaHoraEntre(idEducador, inicio, fin);
-
-        List<HuecoAgendaDto> huecos = new ArrayList<>();
-        LocalDateTime huecoInicio = inicio;
-        while (!huecoInicio.plusHours(1).isAfter(fin)) {
-            LocalDateTime huecoFin = huecoInicio.plusHours(1);
-            final LocalDateTime horaActual = huecoInicio;
-
-            boolean ocupado = sesionesReservadas.stream()
-                    .anyMatch(s -> s.getFechaHora().equals(horaActual));
-            if (!ocupado) {
-                huecos.add(new HuecoAgendaDto(horaActual, huecoFin, ocupado));
-            }
-
-            huecoInicio = huecoFin;
-        }
-
-        return huecos;
-    }
-
     // Reservar una sesion con un educador
     @Override
-    public Sesion reservarSesion(ReservaSesionDto dto, String emailEducador) {
-        Educador educador = educadorRepository.findByEmail(emailEducador)
-                .orElseThrow(() -> new RuntimeException("Educador no encontrado con email: " + emailEducador));
-
+    public Sesion reservarSesion(ReservaSesionDto dto, String emailIgnorado) {
         Perro perro = perroRepository.findById(dto.getIdPerro())
                 .orElseThrow(() -> new RuntimeException("Perro no encontrado"));
 
-        PlanTrabajo plan = planTrabajoRepository.findById(dto.getIdPlanTrabajo())
-                .orElseThrow(() -> new RuntimeException("Plan de trabajo no encontrado"));
+        PlanTrabajo plan = null;
+        if (dto.getIdPlanTrabajo() != null) {
+            plan = planTrabajoRepository.findById(dto.getIdPlanTrabajo())
+                    .orElseThrow(() -> new RuntimeException("Plan de trabajo no encontrado"));
 
-        // Validar que el plan pertenece al cliente del perro
-        if (!plan.getCliente().equals(perro.getCliente())) {
-            throw new RuntimeException("El plan de trabajo no pertenece al cliente del perro");
+            if (!plan.getCliente().equals(perro.getCliente())) {
+                throw new RuntimeException("El plan de trabajo no pertenece al cliente del perro");
+            }
         }
 
-        // ✅ Verificar si ya hay una sesión en ese horario para ese educador
+        Educador educador = educadorRepository.findById(dto.getIdEducador())
+                .orElseThrow(() -> new RuntimeException("Educador no encontrado por ID"));
+
         boolean haySolapamiento = sesionRepository.existsByEducadorAndFechaHora(educador, dto.getFechaHora());
         if (haySolapamiento) {
             throw new RuntimeException("El educador ya tiene una sesión en ese horario");
         }
 
-        // Obtener nombre de la primera actividad
-        String tipoSesion = plan.getActividades().isEmpty()
-                ? "Sesión sin actividades definidas"
-                : plan.getActividades().iterator().next().getNombre();
+        String tipoSesion = (plan != null && !plan.getActividades().isEmpty())
+                ? plan.getActividades().iterator().next().getNombre()
+                : "Sesión sin plan de trabajo";
 
         Sesion sesion = new Sesion();
         sesion.setEducador(educador);
         sesion.setCliente(perro.getCliente());
         sesion.setPerro(perro);
-        sesion.setPlanTrabajo(plan);
+        sesion.setPlanTrabajo(plan); // puede ser null
         sesion.setFechaHora(dto.getFechaHora());
         sesion.setTipoSesion(tipoSesion);
-        sesion.setObservaciones(""); // Puedes cambiarlo si es necesario
+        sesion.setObservaciones("");
         sesion.setRealizada(false);
-        sesion.setAceptada(false); // Si vas a implementar aceptación
+        sesion.setAceptada(false);
 
         return sesionRepository.save(sesion);
     }
@@ -281,5 +244,69 @@ public class SesionService implements SesionServiceInterface {
         sesion.setAceptada(true);
         sesionRepository.save(sesion);
     }
+
+    // Obtener huecos disponibles del educador
+    @Override
+    public List<String> obtenerHuecosDisponibles(Long idEducador, LocalDate fecha) {
+        DayOfWeek dayOfWeek = fecha.getDayOfWeek();
+        DiaSemana diaSemana = convertirADiaSemanaEspanol(dayOfWeek);
+
+        List<Disponibilidad> disponibilidadDia = disponibilidadRepository
+                .findByEducador_IdEducadorAndDiaSemana(idEducador, diaSemana);
+
+        List<Sesion> sesionesOcupadas = sesionRepository
+                .findByEducadorAndFechaRange(idEducador, fecha.atStartOfDay(), fecha.atTime(LocalTime.MAX));
+
+        Set<LocalTime> horasOcupadas = sesionesOcupadas.stream()
+                .map(s -> s.getFechaHora().toLocalTime())
+                .collect(Collectors.toSet());
+
+        List<String> huecosLibres = new ArrayList<>();
+        for (Disponibilidad d : disponibilidadDia) {
+            for (LocalTime hora = d.getHoraInicio(); hora.isBefore(d.getHoraFin()); hora = hora.plusHours(1)) {
+                if (!horasOcupadas.contains(hora)) {
+                    huecosLibres.add(hora.toString().substring(0, 5));
+                }
+            }
+        }
+
+        return huecosLibres;
+    }
+
+
+    // Convertir el DayOfWeek en mi Enum de dias de la semana en español
+    private DiaSemana convertirADiaSemanaEspanol(DayOfWeek dayOfWeek) {
+        return switch (dayOfWeek) {
+            case MONDAY -> DiaSemana.LUNES;
+            case TUESDAY -> DiaSemana.MARTES;
+            case WEDNESDAY -> DiaSemana.MIERCOLES;
+            case THURSDAY -> DiaSemana.JUEVES;
+            case FRIDAY -> DiaSemana.VIERNES;
+            case SATURDAY -> DiaSemana.SABADO;
+            case SUNDAY -> DiaSemana.DOMINGO;
+        };
+    }
+
+    // Rechazar una sesion de adiestramiento
+    @Override
+    public SesionResponseDto rechazarSesion(Long idSesion) {
+        Sesion sesion = sesionRepository.findById(idSesion)
+                .orElseThrow(() -> new RuntimeException("Sesión no encontrada"));
+        sesion.setRechazada(true);
+        sesion.setAceptada(false); // opcional por consistencia
+        Sesion actualizada = sesionRepository.save(sesion);
+
+        SesionResponseDto dto = new SesionResponseDto();
+        dto.setId(actualizada.getIdSesion());
+        dto.setNombrePerro(actualizada.getPerro().getNombre());
+        dto.setActividad(actualizada.getTipoSesion());
+        dto.setFechaHora(actualizada.getFechaHora());
+        dto.setRealizada(actualizada.isRealizada());
+        dto.setAceptada(actualizada.isAceptada());
+        dto.setRechazada(actualizada.isRechazada());
+        return dto;
+    }
+
+
 
 }

@@ -1,5 +1,6 @@
 package com.example.educapp_proyecto.repository;
 
+import com.example.educapp_proyecto.model.DiaSemana;
 import com.example.educapp_proyecto.model.Disponibilidad;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,5 +14,9 @@ import java.util.List;
 public interface DisponibilidadRepository extends JpaRepository<Disponibilidad, Long> {
     @Query("SELECT d FROM Disponibilidad d WHERE d.educador.idEducador = :educadorId AND d.diaSemana = :diaSemana")
     List<Disponibilidad> buscarPorEducadorYDia(@Param("educadorId") Long educadorId, @Param("diaSemana") DayOfWeek diaSemana);
+
+    List<Disponibilidad> findByEducador_IdEducador(Long educadorId);
+
+    List<Disponibilidad> findByEducador_IdEducadorAndDiaSemana(Long idEducador, DiaSemana diaSemana);
 
 }

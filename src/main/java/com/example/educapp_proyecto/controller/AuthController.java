@@ -37,6 +37,7 @@ public class AuthController {
 
         Usuario nuevoUsuario = new Usuario();
         nuevoUsuario.setEmail(dto.getEmail());
+        nuevoUsuario.setNombre(dto.getNombre());
         nuevoUsuario.setPassword(passwordEncoder.encode(dto.getPassword()));
 
         Rol rol = rolRepository.findByNombre(dto.getRol().toUpperCase())
@@ -58,7 +59,7 @@ public class AuthController {
         }
 
         String rol = usuario.getRoles().iterator().next().getNombre();
-        String token = jwtUtil.generarToken(usuario.getEmail(), rol);
+        String token = jwtUtil.generarToken(usuario.getEmail(), usuario.getNombre(), rol);
         return ResponseEntity.ok(token);
     }
 

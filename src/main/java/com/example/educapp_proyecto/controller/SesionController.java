@@ -1,9 +1,11 @@
 package com.example.educapp_proyecto.controller;
 
 
+import com.example.educapp_proyecto.dto.HuecoAgendaDto;
 import com.example.educapp_proyecto.dto.ReservaSesionDto;
 import com.example.educapp_proyecto.dto.SesionRequestDto;
 import com.example.educapp_proyecto.dto.SesionResponseDto;
+import com.example.educapp_proyecto.model.DiaSemana;
 import com.example.educapp_proyecto.model.Sesion;
 import com.example.educapp_proyecto.repository.SesionRepository;
 import com.example.educapp_proyecto.security.JwtUtil;
@@ -14,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -131,4 +134,25 @@ public class SesionController {
         sesionService.aceptarSesion(id);
         return ResponseEntity.ok().build();
     }
+
+    // Rechazar sesion
+    @PutMapping("/{id}/rechazar")
+    public ResponseEntity<SesionResponseDto> rechazarSesion(@PathVariable Long id) {
+        return ResponseEntity.ok(sesionService.rechazarSesion(id));
+    }
+
+
+    // Obtener disponibilidad del educador
+    @GetMapping("/disponibles")
+    public ResponseEntity<List<String>> obtenerDisponibilidad(
+            @RequestParam Long educadorId,
+            @RequestParam String fecha
+    ) {
+        LocalDate fechaLocal = LocalDate.parse(fecha);
+
+        List<String> disponibles = sesionService.obtenerHuecosDisponibles(educadorId, fechaLocal);
+        return ResponseEntity.ok(disponibles);
+    }
+
+
 }

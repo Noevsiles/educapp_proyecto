@@ -2,6 +2,7 @@ package com.example.educapp_proyecto.controller;
 
 import com.example.educapp_proyecto.dto.HuecoAgendaCompletoDto;
 import com.example.educapp_proyecto.dto.HuecoAgendaDto;
+import com.example.educapp_proyecto.model.DiaSemana;
 import com.example.educapp_proyecto.service.SesionServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -20,13 +21,16 @@ public class AgendaController {
 
     // Obtener huecos disponibles de la agenda
     @GetMapping("/disponibles")
-    public ResponseEntity<List<HuecoAgendaDto>> obtenerHuecos(
-            @PathVariable Long idEducador,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha
+    public ResponseEntity<List<String>> obtenerDisponibilidad(
+            @RequestParam Long educadorId,
+            @RequestParam String fecha
     ) {
-        List<HuecoAgendaDto> slots = sesionService.obtenerHuecosDisponibles(idEducador, fecha);
-        return ResponseEntity.ok(slots);
+        LocalDate fechaLocal = LocalDate.parse(fecha);
+
+        List<String> disponibles = sesionService.obtenerHuecosDisponibles(educadorId, fechaLocal);
+        return ResponseEntity.ok(disponibles);
     }
+
 
     // Obtener la agenda completa del adiestrador
     @GetMapping("/completa")

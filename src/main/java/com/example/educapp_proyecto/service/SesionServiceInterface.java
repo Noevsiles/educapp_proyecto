@@ -2,6 +2,7 @@ package com.example.educapp_proyecto.service;
 
 
 import com.example.educapp_proyecto.dto.*;
+import com.example.educapp_proyecto.model.DiaSemana;
 import com.example.educapp_proyecto.model.Sesion;
 
 import java.time.LocalDate;
@@ -19,7 +20,7 @@ public interface SesionServiceInterface {
 
     Sesion crearSesion(SesionRequestDto dto);
 
-    List<HuecoAgendaDto> obtenerHuecosDisponibles(Long idEducador, LocalDate fecha);
+    List<String> obtenerHuecosDisponibles(Long educadorId, LocalDate fecha);
 
     Sesion reservarSesion(ReservaSesionDto reserva, String emailEducador);
 
@@ -34,6 +35,11 @@ public interface SesionServiceInterface {
     List<SesionResponseDto> obtenerSesionesPorEducador(String emailEducador);
 
     void aceptarSesion(Long id);
+
+    SesionResponseDto  rechazarSesion(Long idSesion);
+
+
+
 
 
 

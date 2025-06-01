@@ -11,5 +11,7 @@ public class SesionResponseDto {
     private String actividad;
     private LocalDateTime fechaHora;
     private boolean realizada;
+    private boolean aceptada;
+    private boolean rechazada;
 }
 

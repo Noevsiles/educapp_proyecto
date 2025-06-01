@@ -3,7 +3,9 @@ package com.example.educapp_proyecto.service.impl;
 import com.example.educapp_proyecto.model.*;
 import com.example.educapp_proyecto.repository.PerroRepository;
 import com.example.educapp_proyecto.repository.PlanTrabajoRepository;
+import com.itextpdf.io.font.PdfEncodings;
 import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.font.PdfFont;
 import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -13,7 +15,7 @@ import com.itextpdf.layout.properties.TextAlignment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
+import com.itextpdf.io.font.PdfEncodings;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
@@ -26,6 +28,10 @@ public class InformePdfService {
 
     private final PlanTrabajoRepository planTrabajoRepository;
 
+    @Autowired
+    private ProblemaDeConductaService problemaDeConductaService;
+
+
     public byte[] generarInformePorPerro(Long idPerro) throws Exception {
         var perro = perroRepository.findById(idPerro)
                 .orElseThrow(() -> new RuntimeException("Perro no encontrado"));
@@ -35,6 +41,7 @@ public class InformePdfService {
         PdfWriter writer = new PdfWriter(baos);
         PdfDocument pdfDoc = new PdfDocument(writer);
         Document document = new Document(pdfDoc);
+
 
         var font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
         document.setFont(font);
@@ -53,7 +60,34 @@ public class InformePdfService {
         document.add(new Paragraph("Sexo: " + perro.getSexo()));
         document.add(new Paragraph("\n"));
 
-        // Aquí obtenemos los planes del perro directamente
+        // Problemas de conducta
+        var problemas = perro.getProblemasDeConducta();
+        if (problemas != null && !problemas.isEmpty()) {
+            document.add(new Paragraph("🐶 Problemas de Conducta").setBold().setFontSize(14));
+            for (var problema : problemas) {
+                document.add(new Paragraph(" - " + problema.getNombre()).setBold());
+                document.add(new Paragraph("Descripción: " + problema.getDescripcion()).setBold());
+
+                if (problema.getCausaDeProblemas() != null && !problema.getCausaDeProblemas().isEmpty()) {
+                    document.add(new Paragraph("Causas:").setBold());
+                    for (var causa : problema.getCausaDeProblemas()) {
+                        document.add(new Paragraph("    • " + causa.getCausa().getDescripcion()));
+                    }
+                }
+
+                if (problema.getSolucionAplicadas() != null && !problema.getSolucionAplicadas().isEmpty()) {
+                    document.add(new Paragraph("Soluciones Aplicadas:").setBold());
+                    for (var solucionAplicada : problema.getSolucionAplicadas()) {
+                        var solucion = solucionAplicada.getSolucion();
+                        document.add(new Paragraph("    • " + solucion.getNombre() + ": " + solucion.getDescripcion()));
+                    }
+                }
+
+                document.add(new Paragraph("\n"));
+            }
+        }
+
+        // Planes del perro
         List<PlanTrabajo> planes = planTrabajoRepository.findByPerro_IdPerro(idPerro);
 
         if (planes.isEmpty()) {

@@ -14,6 +14,9 @@ public class PerroResponseDto {
     private boolean esterilizado;
     private Long idCliente;
     private String nombreCliente;
+    private Long idEducador;
+    private Long idPlanTrabaj;
     private String imagenUrl;
+
 
 }
