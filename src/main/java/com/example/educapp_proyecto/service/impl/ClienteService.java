@@ -85,7 +85,7 @@ public class ClienteService implements ClienteServiceInterface {
         Cliente guardado = clienteRepository.save(cliente);
 
         ClienteResponseDto response = new ClienteResponseDto();
-        response.setId(guardado.getIdCliente());
+        response.setIdCliente(guardado.getIdCliente());
         response.setNombre(guardado.getNombre());
         response.setApellidos(guardado.getApellidos());
         response.setEmail(guardado.getEmail());
@@ -105,7 +105,7 @@ public class ClienteService implements ClienteServiceInterface {
 
         for (Cliente cliente : clientes) {
             ClienteResponseDto response = new ClienteResponseDto();
-            response.setId(cliente.getIdCliente());
+            response.setIdCliente(cliente.getIdCliente());
             response.setNombre(cliente.getNombre());
             response.setApellidos(cliente.getApellidos());
             response.setEmail(cliente.getEmail());
