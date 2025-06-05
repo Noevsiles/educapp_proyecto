@@ -2,13 +2,19 @@ package com.example.educapp_proyecto.controller;
 
 
 import com.example.educapp_proyecto.model.Educador;
+import com.example.educapp_proyecto.model.Usuario;
+import com.example.educapp_proyecto.repository.EducadorRepository;
+import com.example.educapp_proyecto.repository.UsuarioRepository;
+import com.example.educapp_proyecto.security.JwtUtil;
 import com.example.educapp_proyecto.service.impl.EducadorService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 /** @author Noelia Vázquez Siles
  * Controlador REST para la gestión de educadores caninos en el sistema.
@@ -19,6 +25,10 @@ public class EducadorController {
     @Autowired
     private EducadorService educadorService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
+
     /**
      * Crea un nuevo educador.
      *
@@ -27,10 +37,24 @@ public class EducadorController {
      */
     // Crear un educador
     @PostMapping
-    public ResponseEntity<Educador> crearEducador(@RequestBody Educador educador) {
-        Educador nuevoEducador = educadorService.save(educador);
-        return new ResponseEntity<>(nuevoEducador, HttpStatus.CREATED);
+    public ResponseEntity<Educador> crearEducador(@RequestBody Educador educador, HttpServletRequest request) {
+        try {
+            String email = jwtUtil.extraerEmailDesdeRequest(request);
+            Educador nuevoEducador = educadorService.crearEducadorParaUsuario(educador, email);
+            return new ResponseEntity<>(nuevoEducador, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
     }
+
+    @PostMapping("/perfil")
+    public ResponseEntity<Educador> crearOActualizarPerfilEducador(@RequestBody Educador educador,
+                                                                   HttpServletRequest request) {
+        String email = jwtUtil.extraerEmailDesdeRequest(request);
+        Educador actualizado = educadorService.crearOActualizarPerfilEducador(educador, email);
+        return ResponseEntity.ok(actualizado);
+    }
+
 
     /**
      * Obtiene todos los educadores registrados.
@@ -60,6 +84,17 @@ public class EducadorController {
             return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
         }
     }
+
+    @GetMapping("/email")
+    public ResponseEntity<Educador> obtenerEducadorPorEmail(HttpServletRequest request) {
+        String email = jwtUtil.extraerEmailDesdeRequest(request);
+        Optional<Educador> educadorOpt = educadorService.obtenerEducadorPorEmailDesdeToken(email);
+
+        return educadorOpt
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
 
     /**
      * Actualiza los datos de un educador existente.

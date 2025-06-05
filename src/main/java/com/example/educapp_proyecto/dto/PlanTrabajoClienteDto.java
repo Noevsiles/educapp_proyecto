@@ -12,6 +12,9 @@ public class PlanTrabajoClienteDto {
     private String nombre;
     private String observaciones;
     private PerroMiniDto perro;
+    private Integer numeroSesiones;
     private List<ProblemaMiniDto> problemas;
     private List<ActividadMiniDto> actividades;
+
+
 }

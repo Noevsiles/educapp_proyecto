@@ -24,4 +24,5 @@ public interface PlanTrabajoRepository extends JpaRepository<PlanTrabajo, Long> 
     List<PlanTrabajo> findByPerro_Cliente(Cliente cliente);
 
     List<PlanTrabajo> findByCliente_Educador(Educador educador);
+
 }

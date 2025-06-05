@@ -42,6 +42,7 @@ public class Educador {
     @JsonIgnore
     private List<Sesion> sesiones;
 
+    @JsonIgnore
     @OneToOne
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;

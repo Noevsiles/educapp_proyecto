@@ -2,10 +2,10 @@ package com.example.educapp_proyecto.controller;
 
 
 import com.example.educapp_proyecto.dto.*;
-import com.example.educapp_proyecto.model.DiaSemana;
 import com.example.educapp_proyecto.model.Sesion;
 import com.example.educapp_proyecto.repository.SesionRepository;
 import com.example.educapp_proyecto.security.JwtUtil;
+import com.example.educapp_proyecto.service.impl.RecordatorioService;
 import com.example.educapp_proyecto.service.impl.SesionService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author Noelia Vázquez Siles
@@ -32,6 +34,9 @@ public class SesionController {
 
     @Autowired
     private SesionRepository sesionRepository;
+
+    @Autowired
+    private RecordatorioService recordatorioService;
 
     /**
      * Crea una nueva sesión.
@@ -183,6 +188,26 @@ public class SesionController {
         sesionService.enviarRecordatorios();
         return ResponseEntity.ok("Recordatorios enviados correctamente");
     }
+
+    /**
+     * Envía manualmente recordatorios a todas las sesiones futuras no realizadas.
+     *
+     * @return Mensaje de confirmación.
+     */
+    @PostMapping("/enviar-recordatorios-manual")
+    public ResponseEntity<String> enviarRecordatoriosManualmente() {
+        List<Sesion> sesionesPendientes = sesionRepository.findAll().stream()
+                .filter(s -> !s.isRealizada())
+                .filter(s -> s.getFechaHora().isAfter(LocalDateTime.now()))
+                .collect(Collectors.toList());
+
+        for (Sesion sesion : sesionesPendientes) {
+            recordatorioService.enviarRecordatorio(sesion);
+        }
+
+        return ResponseEntity.ok("Recordatorios manuales enviados");
+    }
+
 
     /**
      * Obtiene la agenda completa de un educador.

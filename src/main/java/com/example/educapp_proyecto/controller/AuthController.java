@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/** @author Noelia Vázquez Sies
+/** @author Noelia Vázquez Siles
  * Controlador REST para la autenticación y registro de usuarios en el sistema.
  */
 @RestController

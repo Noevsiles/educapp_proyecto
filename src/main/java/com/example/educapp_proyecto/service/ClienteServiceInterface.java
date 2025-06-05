@@ -12,4 +12,5 @@ public interface ClienteServiceInterface {
     Cliente save(Cliente entity);
     void deleteById(Long id);
     ClienteResponseDto crearClienteDesdeDto(ClienteRequestDto dto, String emailEducador);
+    ClienteResponseDto obtenerPerfilCliente(String email);
 }

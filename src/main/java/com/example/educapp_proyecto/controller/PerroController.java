@@ -4,7 +4,6 @@ package com.example.educapp_proyecto.controller;
 import com.example.educapp_proyecto.dto.PerroDetalleDto;
 import com.example.educapp_proyecto.dto.PerroRequestDto;
 import com.example.educapp_proyecto.dto.PerroResponseDto;
-import com.example.educapp_proyecto.model.Cliente;
 import com.example.educapp_proyecto.model.Perro;
 import com.example.educapp_proyecto.security.JwtUtil;
 import com.example.educapp_proyecto.service.BreedServiceInterface;

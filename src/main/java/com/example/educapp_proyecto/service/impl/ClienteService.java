@@ -124,5 +124,27 @@ public class ClienteService implements ClienteServiceInterface {
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado con email: " + email));
     }
 
+    @Override
+    public ClienteResponseDto obtenerPerfilCliente(String email) {
+        Cliente cliente = clienteRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado con email: " + email));
+
+        ClienteResponseDto dto = new ClienteResponseDto();
+        dto.setIdCliente(cliente.getIdCliente());
+        dto.setNombre(cliente.getNombre());
+        dto.setApellidos(cliente.getApellidos());
+        dto.setEmail(cliente.getEmail());
+        dto.setTelefono(cliente.getTelefono());
+
+        if (cliente.getEducador() != null) {
+            dto.setNombreEducador(cliente.getEducador().getNombre());
+        } else {
+            dto.setNombreEducador("Sin asignar");
+        }
+
+        return dto;
+    }
+
+
 
 }

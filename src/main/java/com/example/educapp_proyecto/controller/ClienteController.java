@@ -123,4 +123,14 @@ public class ClienteController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
+
+    // Obtener el perfil del cliente
+    @GetMapping("/mi-perfil")
+    public ResponseEntity<ClienteResponseDto> obtenerPerfilCliente(HttpServletRequest request) {
+        String email = jwtUtil.extraerEmailDesdeRequest(request);
+        ClienteResponseDto dto = clienteService.obtenerPerfilCliente(email);
+        return ResponseEntity.ok(dto);
+    }
+
+
 }

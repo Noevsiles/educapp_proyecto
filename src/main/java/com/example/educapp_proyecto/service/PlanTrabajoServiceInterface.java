@@ -19,4 +19,5 @@ public interface PlanTrabajoServiceInterface  {
     List<PlanTrabajoClienteDto> obtenerPlanesPorCliente(String emailCliente);
 
     List<PlanTrabajoRespuestaDto> obtenerPlanesPorEducador(String emailEducador);
+
 }

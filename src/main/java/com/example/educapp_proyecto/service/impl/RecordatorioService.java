@@ -51,4 +51,17 @@ public class RecordatorioService {
         emailService.enviarCorreo(destinatario, asunto, cuerpo);
     }
 
+    // Enviar recordatorios manualmente a todos los clientes con sesiones agendadas
+    public void enviarRecordatoriosManualmente() {
+        List<Sesion> sesionesPendientes = sesionRepository.findAll().stream()
+                .filter(s -> !s.isRealizada())
+                .filter(s -> s.getFechaHora().isAfter(LocalDateTime.now()))
+                .collect(Collectors.toList());
+
+        for (Sesion sesion : sesionesPendientes) {
+            enviarRecordatorio(sesion);
+        }
+    }
+
+
 }

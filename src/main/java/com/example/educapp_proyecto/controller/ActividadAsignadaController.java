@@ -10,7 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/** @author Noelia Vázquez Sies
+/**
+ * @author Noelia Vázquez Siles
  * Controlador REST para gestionar la asignación de actividades a perros.
  */
 @RestController

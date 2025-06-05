@@ -200,6 +200,7 @@ public class PlanTrabajoService implements PlanTrabajoServiceInterface {
             PlanTrabajoClienteDto dto = new PlanTrabajoClienteDto();
             dto.setIdPlan(plan.getId());
             dto.setObservaciones(plan.getObservaciones());
+            dto.setNumeroSesiones(plan.getNumeroSesiones());
 
             // Datos del perro
             Perro perro = plan.getPerro();
