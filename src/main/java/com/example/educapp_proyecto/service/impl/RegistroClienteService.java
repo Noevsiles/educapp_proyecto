@@ -10,6 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+/**
+ * Servicio encargado del registro de nuevos clientes en EducApp.
+ * Este servicio se asegura de que el email no esté duplicado,
+ * crea un nuevo usuario con contraseña encriptada y registra el cliente asociado.
+ *
+ * @author Noelia Vázquez Siles
+ */
 @Service
 public class RegistroClienteService {
 
@@ -23,6 +30,13 @@ public class RegistroClienteService {
     private PasswordEncoder passwordEncoder;
 
     // Registrar cliente por dto
+    /**
+     * Registra un nuevo cliente a partir de un DTO de registro.
+     * Verifica que el email no exista previamente, crea el usuario y lo asocia al cliente.
+     *
+     * @param dto Objeto que contiene los datos del nuevo cliente a registrar.
+     * @throws RuntimeException si ya existe un usuario con el mismo email.
+     */
     public void registrarCliente(RegistroClienteDto dto) {
         if (usuarioRepo.existsByEmail(dto.getEmail())) {
             throw new RuntimeException("Ya existe un usuario con ese email");

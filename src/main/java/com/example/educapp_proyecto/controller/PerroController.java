@@ -17,7 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/** @author Noelia Vázquez Siles
+/**
+ * @author Noelia Vázquez Siles
  * Controlador REST para gestionar los perros, incluyendo operaciones CRUD,
  * asignación de problemas y consulta por educador o cliente.
  */

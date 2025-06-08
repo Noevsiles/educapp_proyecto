@@ -14,6 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Servicio que gestiona la lógica relacionada con los clientes.
+ * Permite operaciones CRUD, así como transformaciones DTO y búsquedas específicas por educador o email.
+ *
+ * @author Noelia Vázquez Siles
+ */
 @Service
 public class ClienteService implements ClienteServiceInterface {
     @Autowired
@@ -23,12 +29,25 @@ public class ClienteService implements ClienteServiceInterface {
     private EducadorRepository educadorRepository;
 
     // Encontrar todos
+    /**
+     * Obtiene todos los clientes registrados.
+     *
+     * @return lista de todos los {Cliente}.
+     */
     @Override
     public List<Cliente> findAll() {
         return clienteRepository.findAll();
     }
 
+
     // Encontrar cliente por su id
+    /**
+     * Encontrar un cliente por su ID.
+     *
+     * @param id ID del cliente.
+     * @return cliente encontrado.
+     * @throws RuntimeException si no se encuentra el cliente.
+     */
     @Override
     public Cliente findById(Long id) {
         Optional<Cliente> cliente = clienteRepository.findById(id);
@@ -40,6 +59,12 @@ public class ClienteService implements ClienteServiceInterface {
     }
 
     // Guardar cliente
+    /**
+     * Guarda un nuevo cliente en la base de datos.
+     *
+     * @param cliente cliente a guardar.
+     * @return cliente guardado.
+     */
     @Override
     public Cliente save(Cliente cliente) {
         return clienteRepository.save(cliente);
@@ -47,6 +72,12 @@ public class ClienteService implements ClienteServiceInterface {
 
 
     // Eliminar cliente por id
+    /**
+     * Elimina un cliente por su ID si existe.
+     *
+     * @param id ID del cliente.
+     * @throws RuntimeException si el cliente no existe.
+     */
     @Override
     public void deleteById(Long id) {
         if (clienteRepository.existsById(id)) {
@@ -57,6 +88,13 @@ public class ClienteService implements ClienteServiceInterface {
     }
 
     // Actualizar un cliente
+    /**
+     * Actualiza los datos de un cliente existente.
+     *
+     * @param id ID del cliente.
+     * @param datosActualizados nuevos datos del cliente.
+     * @return cliente actualizado.
+     */
     public Cliente updateCliente(Long id, Cliente datosActualizados) {
         Cliente clienteExistente = findById(id);
 
@@ -70,6 +108,13 @@ public class ClienteService implements ClienteServiceInterface {
     }
 
     // Crear un cliente a traves del dto
+    /**
+     * Crea un nuevo cliente asociado a un educador, a partir de un DTO.
+     *
+     * @param dto DTO con los datos del cliente.
+     * @param emailEducador email del educador que lo registra.
+     * @return DTO con los datos del cliente creado.
+     */
     @Override
     public ClienteResponseDto crearClienteDesdeDto(ClienteRequestDto dto, String emailEducador) {
         Educador educador = educadorRepository.findByEmail(emailEducador)
@@ -96,6 +141,12 @@ public class ClienteService implements ClienteServiceInterface {
     }
 
     // Obtener los clientes por el email del educador
+    /**
+     * Obtiene todos los clientes asociados a un educador identificado por su email.
+     *
+     * @param emailEducador email del educador.
+     * @return lista de clientes como DTOs.
+     */
     public List<ClienteResponseDto> obtenerClientesPorEmailEducador(String emailEducador) {
         Educador educador = educadorRepository.findByEmail(emailEducador)
                 .orElseThrow(() -> new RuntimeException("Educador no encontrado con email: " + emailEducador));
@@ -119,11 +170,24 @@ public class ClienteService implements ClienteServiceInterface {
     }
 
     // Obtener al cliente por su email
+    /**
+     * Busca un cliente por su email.
+     *
+     * @param email del cliente.
+     * @return cliente encontrado.
+     * @throws RuntimeException si no se encuentra el cliente.
+     */
     public Cliente obtenerClientePorEmail(String email) {
         return clienteRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Cliente no encontrado con email: " + email));
     }
 
+    /**
+     * Obtiene los datos del perfil de un cliente a partir de su email.
+     *
+     * @param email email del cliente.
+     * @return DTO con los datos del cliente.
+     */
     @Override
     public ClienteResponseDto obtenerPerfilCliente(String email) {
         Cliente cliente = clienteRepository.findByEmail(email)
@@ -144,7 +208,4 @@ public class ClienteService implements ClienteServiceInterface {
 
         return dto;
     }
-
-
-
 }

@@ -16,7 +16,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
+/**
+ * Servicio que gestiona la lógica relacionada con la entidad Perro.
+ * Incluye operaciones CRUD, asignación de problemas de conducta y conversión a DTOs.
+ *
+ * @author Noelia Vázquez Siles
+ */
 @Service
 public class PerroService implements PerroServiceInterface {
     @Autowired
@@ -30,12 +35,24 @@ public class PerroService implements PerroServiceInterface {
 
 
     // Encontrar todos los perros
+    /**
+     * Devuelve una lista con todos los perros registrados.
+     *
+     * @return lista de perros
+     */
     @Override
     public List<Perro> findAll() {
         return perroRepository.findAll();
     }
 
     // Encontrar perro por su id
+    /**
+     * Busca un perro por su ID.
+     *
+     * @param id ID del perro
+     * @return el perro encontrado
+     * @throws RuntimeException si no se encuentra el perro
+     */
     @Override
     public Perro findById(Long id) {
         Optional<Perro> perro = perroRepository.findById(id);
@@ -47,12 +64,23 @@ public class PerroService implements PerroServiceInterface {
     }
 
     // Guardar perro
+    /**
+     * Guarda un nuevo perro.
+     *
+     * @param perro objeto perro a guardar
+     * @return el perro guardado
+     */
     @Override
     public Perro save(Perro perro) {
         return perroRepository.save(perro);
     }
 
     // Eliminar perro por su id
+    /**
+     * Elimina un perro por su ID.
+     *
+     * @param id ID del perro a eliminar
+     */
     @Override
     public void deleteById(Long id) {
         if (perroRepository.existsById(id)) {
@@ -63,6 +91,13 @@ public class PerroService implements PerroServiceInterface {
     }
 
     // Actualizar un perro
+    /**
+     * Actualiza un perro existente.
+     *
+     * @param id ID del perro
+     * @param perro datos actualizados
+     * @return perro actualizado
+     */
     public Perro updatePerro(Long id, Perro perro) {
         if (perroRepository.existsById(id)) {
             perro.setIdPerro(id);  // Aseguramos que el ID es el mismo
@@ -73,6 +108,12 @@ public class PerroService implements PerroServiceInterface {
     }
 
     // Crear un perro
+    /**
+     * Crea un nuevo perro a partir de un DTO.
+     *
+     * @param dto datos del perro
+     * @return DTO de respuesta con los datos del perro creado
+     */
     @Override
     public PerroResponseDto crearPerro(PerroRequestDto dto) {
         Cliente cliente = clienteRepository.findById(dto.getClienteId())
@@ -107,6 +148,12 @@ public class PerroService implements PerroServiceInterface {
     }
 
     // Convertir Perro en PerroResponseDto
+    /**
+     * Convierte un objeto Perro en un DTO de respuesta.
+     *
+     * @param perro objeto perro
+     * @return DTO de respuesta
+     */
     @Override
     public PerroResponseDto convertirAPerroDto(Perro perro) {
         PerroResponseDto dto = new PerroResponseDto();
@@ -128,6 +175,12 @@ public class PerroService implements PerroServiceInterface {
     }
 
     // Obtener los perros asociados al educador
+    /**
+     * Devuelve los perros registrados por un educador específico.
+     *
+     * @param emailEducador email del educador
+     * @return lista de perros del educador
+     */
     @Override
     public List<PerroResponseDto> obtenerPerrosPorEducador(String emailEducador) {
         List<Perro> perros = perroRepository.findByCliente_Educador_Email(emailEducador);
@@ -149,6 +202,12 @@ public class PerroService implements PerroServiceInterface {
 
 
     // Asignar problemas a perro
+    /**
+     * Asigna una lista de problemas de conducta a un perro.
+     *
+     * @param idPerro ID del perro
+     * @param idProblemas lista de IDs de problemas
+     */
     @Override
     @Transactional
     public void asignarProblemasA(Long idPerro, List<Long> idProblemas) {
@@ -162,6 +221,12 @@ public class PerroService implements PerroServiceInterface {
     }
 
     // Convertir perro a dto
+    /**
+     * Convierte un objeto Perro a un DTO con detalle, incluyendo problemas, causas y soluciones.
+     *
+     * @param perro objeto perro
+     * @return DTO detallado
+     */
     @Override
     public PerroDetalleDto convertirADetalleDto(Perro perro) {
         PerroDetalleDto dto = new PerroDetalleDto();
@@ -210,6 +275,12 @@ public class PerroService implements PerroServiceInterface {
     }
 
     // Obtener los perros que tiene un cliente (puede tener mas de uno)
+    /**
+     * Devuelve los perros asociados a un cliente identificado por su email.
+     *
+     * @param emailCliente email del cliente
+     * @return lista de perros
+     */
     @Override
     public List<PerroResponseDto> obtenerPerrosPorCliente(String emailCliente) {
         Cliente cliente = clienteRepository.findByEmail(emailCliente)
@@ -236,6 +307,13 @@ public class PerroService implements PerroServiceInterface {
     }
 
     // Actualizar un perro utilizando el dto
+    /**
+     * Actualiza los datos de un perro a partir de un DTO.
+     *
+     * @param id ID del perro
+     * @param dto datos actualizados
+     * @return DTO del perro actualizado
+     */
     @Override
     public PerroResponseDto actualizarPerroDesdeDto(Long id, PerroRequestDto dto) {
         Perro perro = perroRepository.findById(id)

@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.List;
 
-/** @author Noelia Vázquez Siles
+/**
+ * @author Noelia Vázquez Siles
  * Controlador REST para gestionar la agenda de un educador,
  * incluyendo la consulta de huecos disponibles y la agenda completa.
  */

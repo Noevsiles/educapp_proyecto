@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/** @author Noelia Vázquez Siles
+/**
+ * @author Noelia Vázquez Siles
  * Controlador REST para la generación de informes PDF relacionados con los perros.
  */
 @RestController

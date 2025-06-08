@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-/** @author Noelia Vázquez Siles
+/**
+ * @author Noelia Vázquez Siles
  * Controlador REST para la gestión de educadores caninos en el sistema.
  */
 @RestController
@@ -85,6 +86,12 @@ public class EducadorController {
         }
     }
 
+    /**
+     * Obtiene los datos del educador autenticado mediante el email extraído del token JWT.
+     *
+     * @param request la solicitud HTTP que contiene el token JWT
+     * @return una respuesta con los datos del educador si existe, o 404 si no se encuentra
+     */
     @GetMapping("/email")
     public ResponseEntity<Educador> obtenerEducadorPorEmail(HttpServletRequest request) {
         String email = jwtUtil.extraerEmailDesdeRequest(request);

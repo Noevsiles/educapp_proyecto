@@ -17,6 +17,12 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Servicio que gestiona la lógica de negocio relacionada con los planes de trabajo,
+ * incluyendo su creación, consulta, eliminación y asignación de actividades y soluciones.
+ *
+ * @author Noelia Vázquez Siles
+ */
 @Service
 public class PlanTrabajoService implements PlanTrabajoServiceInterface {
 
@@ -52,6 +58,12 @@ public class PlanTrabajoService implements PlanTrabajoServiceInterface {
 
 
     // Crear un plan de trabajo
+    /**
+     * Crea un nuevo plan de trabajo para un cliente y un perro, asociando problemas, soluciones y actividades.
+     *
+     * @param dto DTO que contiene los datos necesarios para crear el plan.
+     * @return PlanTrabajo creado con todas las relaciones asociadas.
+     */
     @Transactional
     @Override
     public PlanTrabajo crearPlan(PlanTrabajoDto dto) {
@@ -123,6 +135,12 @@ public class PlanTrabajoService implements PlanTrabajoServiceInterface {
 
 
     // Convertir el plan de trabajo a DTO
+    /**
+     * Convierte un objeto PlanTrabajo en su DTO de respuesta.
+     *
+     * @param plan PlanTrabajo a convertir.
+     * @return DTO con los datos del plan.
+     */
     private PlanTrabajoRespuestaDto convertirAPlanDto(PlanTrabajo plan) {
         PlanTrabajoRespuestaDto dto = new PlanTrabajoRespuestaDto();
         dto.setId(plan.getId());
@@ -156,6 +174,12 @@ public class PlanTrabajoService implements PlanTrabajoServiceInterface {
     }
 
     // Listar los planes de trabajo por cliente
+    /**
+     * Lista los planes de trabajo de un cliente específico.
+     *
+     * @param idCliente ID del cliente.
+     * @return Lista de planes de trabajo en formato DTO.
+     */
     @Transactional
     @Override
     public List<PlanTrabajoRespuestaDto> listarPlanesPorCliente(Long idCliente) {
@@ -166,6 +190,12 @@ public class PlanTrabajoService implements PlanTrabajoServiceInterface {
     }
 
     // Buscar plan de trabajo por su id
+    /**
+     * Busca un plan de trabajo por su ID.
+     *
+     * @param id ID del plan.
+     * @return PlanTrabajo encontrado.
+     */
     @Override
     public PlanTrabajo buscarPorId(Long id) {
         return planTrabajoRepository.findById(id)
@@ -173,22 +203,44 @@ public class PlanTrabajoService implements PlanTrabajoServiceInterface {
     }
 
     // Guardar plan de trabajo
+    /**
+     * Guarda un plan de trabajo.
+     *
+     * @param plan Plan de trabajo a guardar.
+     * @return Plan de trabajo guardado.
+     */
     public PlanTrabajo save(PlanTrabajo plan) {
         return planTrabajoRepository.save(plan);
     }
 
     // Obtener todos los planes de trabajo
+    /**
+     * Obtiene todos los planes de trabajo del sistema.
+     *
+     * @return Lista de todos los planes.
+     */
     public List<PlanTrabajo> obtenerTodos() {
         return planTrabajoRepository.findAll();
     }
 
     // Eliminar un plan de trabajo por id
+    /**
+     * Elimina un plan de trabajo dado su ID.
+     *
+     * @param id ID del plan a eliminar.
+     */
     @Override
     public void eliminarPorId(Long id) {
         planTrabajoRepository.deleteById(id);
     }
 
     // Obtener los planes de trabajo por cliente
+    /**
+     * Obtiene los planes de trabajo asociados a un cliente por su email.
+     *
+     * @param emailCliente Email del cliente.
+     * @return Lista de planes en formato cliente DTO.
+     */
     @Override
     public List<PlanTrabajoClienteDto> obtenerPlanesPorCliente(String emailCliente) {
         Cliente cliente = clienteRepository.findByEmail(emailCliente)
@@ -227,6 +279,12 @@ public class PlanTrabajoService implements PlanTrabajoServiceInterface {
     }
 
     // Obtener los planes de trabajo por el educador
+    /**
+     * Obtiene los planes de trabajo de todos los clientes de un educador por su email.
+     *
+     * @param emailEducador Email del educador autenticado.
+     * @return Lista de planes de trabajo del educador.
+     */
     @Override
     public List<PlanTrabajoRespuestaDto> obtenerPlanesPorEducador(String emailEducador) {
         System.out.println("Buscando educador con email: " + emailEducador);

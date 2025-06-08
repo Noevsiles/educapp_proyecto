@@ -16,7 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/** @author Noelia Vázquez Siles
+/**
+ * @author Noelia Vázquez Siles
  * Controlador REST para la gestión de planes de trabajo asociados a perros, clientes y educadores.
  */
 @RestController
@@ -133,7 +134,4 @@ public class PlanTrabajoController {
         List<PlanTrabajoRespuestaDto> planes = planTrabajoService.obtenerPlanesPorEducador(emailEducador);
         return ResponseEntity.ok(planes);
     }
-
-
-
 }

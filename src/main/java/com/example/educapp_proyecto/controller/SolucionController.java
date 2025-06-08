@@ -35,7 +35,7 @@ public class SolucionController {
     /**
      * Obtiene todas las soluciones disponibles.
      *
-     * @return Lista de objetos {@link Solucion} con estado HTTP 200.
+     * @return Lista de objetos {Solucion} con estado HTTP 200.
      */
     // Obtener todas las soluciones
     @GetMapping

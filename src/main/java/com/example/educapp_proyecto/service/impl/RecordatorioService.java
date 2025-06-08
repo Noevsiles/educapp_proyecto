@@ -10,6 +10,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Servicio encargado de enviar recordatorios por correo electrónico a los clientes
+ * sobre sus sesiones próximas en EducApp.
+ * Los recordatorios pueden ser enviados automáticamente (cada hora) o manualmente.
+ *
+ * @author Noelia Vázquez Siles
+ */
 @Service
 public class RecordatorioService {
 
@@ -20,6 +27,11 @@ public class RecordatorioService {
     private EmailService emailService;
 
     // Revisa cada hora si hay sesiones que empiezan en 3h
+    /**
+     * Tarea programada que se ejecuta cada hora.
+     * Busca sesiones que comienzan dentro de 3 horas y aún no se han realizado,
+     * y envía un recordatorio por correo electrónico al cliente correspondiente.
+     */
     @Scheduled(cron = "0 0 * * * *")
     public void enviarRecordatorios() {
         System.out.println("Buscando sesiones para enviar recordatorios...");
@@ -41,6 +53,11 @@ public class RecordatorioService {
     }
 
     // Enviar recordatorio a email
+    /**
+     * Envía un recordatorio por correo electrónico para una sesión específica.
+     *
+     * @param sesion La sesión para la cual se enviará el recordatorio.
+     */
     public void enviarRecordatorio(Sesion sesion) {
         String destinatario = sesion.getCliente().getEmail();
         String asunto = "Recordatorio de sesión con educador";
@@ -52,6 +69,10 @@ public class RecordatorioService {
     }
 
     // Enviar recordatorios manualmente a todos los clientes con sesiones agendadas
+    /**
+     * Envia manualmente recordatorios por correo a todos los clientes que tengan sesiones pendientes
+     * en el futuro y aún no realizadas.
+     */
     public void enviarRecordatoriosManualmente() {
         List<Sesion> sesionesPendientes = sesionRepository.findAll().stream()
                 .filter(s -> !s.isRealizada())
@@ -62,6 +83,4 @@ public class RecordatorioService {
             enviarRecordatorio(sesion);
         }
     }
-
-
 }

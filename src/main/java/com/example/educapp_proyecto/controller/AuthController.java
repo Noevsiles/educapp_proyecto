@@ -14,7 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-/** @author Noelia Vázquez Siles
+/**
+ * @author Noelia Vázquez Siles
  * Controlador REST para la autenticación y registro de usuarios en el sistema.
  */
 @RestController
@@ -33,6 +34,12 @@ public class AuthController {
     private JwtUtil jwtUtil;
 
 
+    /**
+     * Registra un nuevo usuario en el sistema si el email no está ya registrado.
+     *
+     * @param dto DTO con los datos del nuevo usuario (nombre, email, contraseña, rol)
+     * @return respuesta indicando éxito o fallo en el registro
+     */
     @PostMapping("/registro")
     public ResponseEntity<String> registrarUsuario(@RequestBody RegistroRequestDto dto) {
         if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
@@ -53,6 +60,12 @@ public class AuthController {
         return ResponseEntity.ok("Usuario registrado correctamente");
     }
 
+    /**
+     * Realiza el login de un usuario si las credenciales son válidas.
+     *
+     * @param dto DTO con email y contraseña
+     * @return token JWT si el login es exitoso, o mensaje de error si falla
+     */
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody RegistroRequestDto dto) {
         Usuario usuario = usuarioRepository.findByEmail(dto.getEmail())

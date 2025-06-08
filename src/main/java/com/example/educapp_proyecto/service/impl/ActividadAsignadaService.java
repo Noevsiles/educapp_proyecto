@@ -13,6 +13,13 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+/**
+ * Servicio que gestiona la asignación de actividades a los perros.
+ * Permite asignar nuevas actividades, consultar las actividades de un perro,
+ * y marcar actividades como completadas.
+ *
+ * @author Noelia Vázquez Siles
+ */
 @Service
 public class ActividadAsignadaService implements ActividadAsignadaServiceInterface {
 
@@ -27,6 +34,13 @@ public class ActividadAsignadaService implements ActividadAsignadaServiceInterfa
 
 
     // Asignar actividades al perro
+    /**
+     * Asigna una actividad específica a un perro.
+     *
+     * @param actividadId ID de la actividad a asignar.
+     * @param perroId     ID del perro al que se le asignará la actividad.
+     * @throws RuntimeException si no se encuentra la actividad o el perro.
+     */
     @Override
     public void asignarActividad(Long actividadId, Long perroId) {
         Actividad actividad = actividadRepo.findById(actividadId)
@@ -44,6 +58,13 @@ public class ActividadAsignadaService implements ActividadAsignadaServiceInterfa
     }
 
     // Obtener las actividades del perro por su id
+    /**
+     * Obtiene la lista de actividades asignadas a un perro por su ID.
+     *
+     * @param perroId ID del perro.
+     * @return Lista de actividades asignadas en forma de DTOs.
+     * @throws RuntimeException si el perro no existe.
+     */
     @Override
     public List<ActividadAsignadaResponseDto> obtenerActividadesPorPerro(Long perroId) {
         Perro perro = perroRepo.findById(perroId).orElseThrow();
@@ -57,6 +78,12 @@ public class ActividadAsignadaService implements ActividadAsignadaServiceInterfa
         }).toList();
     }
 
+    /**
+     * Marca una actividad asignada como completada.
+     *
+     * @param idAsignacion ID de la asignación de actividad.
+     * @throws RuntimeException si no se encuentra la asignación.
+     */
     // Marcar una actividad como completada
     @Override
     public void marcarComoCompletada(Long idAsignacion) {

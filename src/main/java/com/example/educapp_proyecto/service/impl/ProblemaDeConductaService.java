@@ -17,6 +17,12 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Servicio encargado de gestionar los problemas de conducta,
+ * incluyendo su registro, asignación a perros y conversión a DTOs para el frontend.
+ *
+ * @author Noelia Vázquez Siles
+ */
 @Service
 public class ProblemaDeConductaService implements ProblemaDeConductaServiceInterface {
     @Autowired
@@ -26,11 +32,23 @@ public class ProblemaDeConductaService implements ProblemaDeConductaServiceInter
     private PerroRepository perroRepository;
 
 
+    /**
+     * Recupera todos los problemas de conducta existentes en la base de datos.
+     *
+     * @return Lista de ProblemaDeConducta.
+     */
     @Override
     public List<ProblemaDeConducta> findAll() {
         return problemaDeConductaRepository.findAll();
     }
 
+    /**
+     * Busca un problema de conducta por su ID.
+     *
+     * @param id ID del problema.
+     * @return ProblemaDeConducta encontrado.
+     * @throws RuntimeException si no se encuentra el problema.
+     */
     @Override
     public ProblemaDeConducta findById(Long id) {
         Optional<ProblemaDeConducta> problemaDeConducta = problemaDeConductaRepository.findById(id);
@@ -42,12 +60,24 @@ public class ProblemaDeConductaService implements ProblemaDeConductaServiceInter
     }
 
     // Guardar problema de conducta
+    /**
+     * Guarda un nuevo problema de conducta.
+     *
+     * @param problemaDeConducta objeto a guardar.
+     * @return ProblemaDeConducta guardado.
+     */
     @Override
     public ProblemaDeConducta save(ProblemaDeConducta problemaDeConducta) {
         return problemaDeConductaRepository.save(problemaDeConducta);
     }
 
     // Borrar problema por id
+    /**
+     * Borra un problema de conducta dado su ID.
+     *
+     * @param id ID del problema a eliminar.
+     * @throws RuntimeException si no se encuentra el problema.
+     */
     @Override
     public void deleteById(Long id) {
         if (problemaDeConductaRepository.existsById(id)) {
@@ -58,6 +88,14 @@ public class ProblemaDeConductaService implements ProblemaDeConductaServiceInter
     }
 
     // Actualizar un problema de conducta
+    /**
+     * Actualiza un problema de conducta existente.
+     *
+     * @param id ID del problema a actualizar.
+     * @param problemaDeConducta nuevo objeto con los datos actualizados.
+     * @return ProblemaDeConducta actualizado.
+     * @throws RuntimeException si no se encuentra el problema.
+     */
     public ProblemaDeConducta updateProblemaDeConducta(Long id, ProblemaDeConducta problemaDeConducta) {
         if (problemaDeConductaRepository.existsById(id)) {
             problemaDeConducta.setIdProblema(id);
@@ -68,6 +106,13 @@ public class ProblemaDeConductaService implements ProblemaDeConductaServiceInter
     }
 
     // Asignar problemas por el id del perro
+    /**
+     * Asigna una lista de problemas de conducta a un perro específico.
+     *
+     * @param idPerro     ID del perro.
+     * @param idProblemas Lista de IDs de los problemas a asignar.
+     * @throws RuntimeException si no se encuentra el perro.
+     */
     @Override
     @Transactional
     public void asignarProblemasAPerro(Long idPerro, List<Long> idProblemas) {
@@ -80,6 +125,12 @@ public class ProblemaDeConductaService implements ProblemaDeConductaServiceInter
     }
 
     // Obtener los problemas de conducta solo con su id y su nombre
+    /**
+     * Obtiene todos los problemas de conducta y los convierte en DTOs
+     * que incluyen su ID, nombre, causas y soluciones.
+     *
+     * @return Lista de ProblemaConductaDto.
+     */
     @Override
     public List<ProblemaConductaDto> obtenerTodosSoloIdYNombre() {
         return problemaDeConductaRepository.findAll()
@@ -115,6 +166,13 @@ public class ProblemaDeConductaService implements ProblemaDeConductaServiceInter
     }
 
     // Obtener problemas con soluciones de un perro
+    /**
+     * Obtiene los problemas de conducta de un perro junto con sus causas y soluciones.
+     *
+     * @param idPerro ID del perro.
+     * @return Lista de ProblemaConductaDto con la información relacionada.
+     * @throws RuntimeException si no se encuentra el perro.
+     */
     @Override
     public List<ProblemaConductaDto> obtenerProblemasYSolucionesDelPerro(Long idPerro) {
         Perro perro = perroRepository.findById(idPerro)

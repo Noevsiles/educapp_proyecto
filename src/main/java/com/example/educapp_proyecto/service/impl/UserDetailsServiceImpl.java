@@ -11,6 +11,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
 
+/**
+ * Implementación personalizada de {@link org.springframework.security.core.userdetails.UserDetailsService}
+ * que permite cargar detalles de usuario a partir del email, utilizado para la autenticación en Spring Security.
+ * Esta clase transforma el usuario en una instancia de {@link org.springframework.security.core.userdetails.User}
+ * con sus correspondientes roles como autoridades.
+ *
+ * @author Noe
+ */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsServiceInterface {
 
@@ -18,6 +26,13 @@ public class UserDetailsServiceImpl implements UserDetailsServiceInterface {
     private UsuarioRepository usuarioRepository;
 
     // Cargar un usuario por su nombre de usuario
+    /**
+     * Carga los detalles de un usuario dado su email.
+     *
+     * @param email el email del usuario
+     * @return los detalles del usuario como {@link UserDetails}
+     * @throws UsernameNotFoundException si no se encuentra el usuario con el email proporcionado
+     */
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Usuario usuario = usuarioRepository.findByEmail(email)

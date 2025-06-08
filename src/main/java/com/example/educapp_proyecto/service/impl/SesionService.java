@@ -15,6 +15,13 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+/**
+ * Servicio que gestiona la lógica de negocio para las sesiones entre educadores y clientes.
+ * Incluye operaciones para crear, reservar, aceptar, rechazar, filtrar sesiones,
+ * y generar huecos disponibles en la agenda de un educador.
+ *
+ * @author Noelia Vázquez Siles
+ */
 @Service
 public class SesionService implements SesionServiceInterface {
 
@@ -44,6 +51,12 @@ public class SesionService implements SesionServiceInterface {
 
 
     // Crear sesion
+    /**
+     * Crea una nueva sesión.
+     *
+     * @param dto datos necesarios para crear la sesión
+     * @return la sesión creada
+     */
     @Override
     public Sesion crearSesion(SesionRequestDto dto) {
         Cliente cliente = clienteRepository.findById(dto.getClienteId())
@@ -78,12 +91,24 @@ public class SesionService implements SesionServiceInterface {
     }
 
     // Encontrar todas las sesiones
+    /**
+     * Recupera todas las sesiones.
+     *
+     * @return lista de sesiones
+     */
     @Override
     public List<Sesion> findAll() {
         return sesionRepository.findAll();
     }
 
     // Encontrar sesion por id
+    /**
+     * Busca una sesión por su ID.
+     *
+     * @param id identificador de la sesión
+     * @return la sesión encontrada
+     * @throws RuntimeException si no se encuentra la sesión
+     */
     @Override
     public Sesion findById(Long id) {
         Optional<Sesion> sesion = sesionRepository.findById(id);
@@ -95,12 +120,24 @@ public class SesionService implements SesionServiceInterface {
     }
 
     // Guardar sesion
+    /**
+     * Guarda una sesión en la base de datos.
+     *
+     * @param sesion objeto de sesión a guardar
+     * @return sesión guardada
+     */
     @Override
     public Sesion save(Sesion sesion) {
         return sesionRepository.save(sesion);
     }
 
     // Borrar sesion por id
+    /**
+     * Elimina una sesión por su ID.
+     *
+     * @param id identificador de la sesión
+     * @throws RuntimeException si no se encuentra la sesión
+     */
     @Override
     public void deleteById(Long id) {
         if (sesionRepository.existsById(id)) {
@@ -111,6 +148,13 @@ public class SesionService implements SesionServiceInterface {
     }
 
     // Reservar una sesion con un educador
+    /**
+     * Reserva una sesión con un educador.
+     *
+     * @param dto datos necesarios para la reserva
+     * @param emailIgnorado no se utiliza actualmente
+     * @return sesión reservada
+     */
     @Override
     public Sesion reservarSesion(ReservaSesionDto dto, String emailIgnorado) {
         Perro perro = perroRepository.findById(dto.getIdPerro())
@@ -153,6 +197,13 @@ public class SesionService implements SesionServiceInterface {
     }
 
     // Obtener la agenda completa de un educador
+    /**
+     * Obtiene la agenda completa de un educador en una fecha específica.
+     *
+     * @param idEducador identificador del educador
+     * @param fecha fecha para consultar
+     * @return lista de huecos con estado ocupado/libre
+     */
     @Override
     public List<HuecoAgendaCompletoDto> obtenerAgendaCompleta(Long idEducador, LocalDate fecha) {
         DayOfWeek diaSemana = fecha.getDayOfWeek();
@@ -183,6 +234,12 @@ public class SesionService implements SesionServiceInterface {
     }
 
     // Marcar sesiones como realizadas
+    /**
+     * Marca una sesión como realizada.
+     *
+     * @param idSesion identificador de la sesión
+     * @return sesión actualizada como realizada
+     */
     @Override
     public Sesion marcarComoRealizada(Long idSesion) {
         Sesion sesion = sesionRepository.findById(idSesion)
@@ -193,6 +250,14 @@ public class SesionService implements SesionServiceInterface {
     }
 
     // Filtrar sesiones por cliente, perro o educador
+    /**
+     * Filtra las sesiones por cliente, perro o educador.
+     *
+     * @param clienteId id del cliente
+     * @param perroId id del perro
+     * @param educadorId id del educador
+     * @return lista filtrada de sesiones
+     */
     @Override
     public List<Sesion> filtrarSesiones(Long clienteId, Long perroId, Long educadorId) {
         return sesionRepository.findAll().stream()
@@ -203,6 +268,9 @@ public class SesionService implements SesionServiceInterface {
     }
 
     // Enviar recordatorios de sesiones por email
+    /**
+     * Envía recordatorios de sesiones a realizarse en las próximas 24 horas.
+     */
     @Override
     public void enviarRecordatorios() {
         // Busca sesiones dentro de las próximas 24 horas
@@ -222,6 +290,12 @@ public class SesionService implements SesionServiceInterface {
     }
 
     // Obtener sesiones del educador
+    /**
+     * Obtiene las sesiones programadas por un educador.
+     *
+     * @param emailEducador email del educador
+     * @return lista de sesiones en forma de DTO
+     */
     @Override
     public List<SesionResponseDto> obtenerSesionesPorEducador(String emailEducador) {
         Educador educador = educadorRepository.findByEmail(emailEducador)
@@ -240,6 +314,11 @@ public class SesionService implements SesionServiceInterface {
     }
 
     // Aceptar la sesion que pide el cliente
+    /**
+     * Acepta una solicitud de sesión.
+     *
+     * @param id identificador de la sesión
+     */
     @Override
     public void aceptarSesion(Long id) {
         Sesion sesion = sesionRepository.findById(id)
@@ -250,6 +329,13 @@ public class SesionService implements SesionServiceInterface {
     }
 
     // Obtener huecos disponibles del educador
+    /**
+     * Devuelve una lista de horas disponibles en un día para un educador.
+     *
+     * @param idEducador identificador del educador
+     * @param fecha fecha a consultar
+     * @return lista de horas en formato HH:mm
+     */
     @Override
     public List<String> obtenerHuecosDisponibles(Long idEducador, LocalDate fecha) {
         DayOfWeek dayOfWeek = fecha.getDayOfWeek();
@@ -279,6 +365,12 @@ public class SesionService implements SesionServiceInterface {
 
 
     // Convertir el DayOfWeek en mi Enum de dias de la semana en español
+    /**
+     * Convierte un objeto DayOfWeek a un valor del enum DiaSemana.
+     *
+     * @param dayOfWeek día de la semana en inglés
+     * @return día de la semana en español (enum)
+     */
     private DiaSemana convertirADiaSemanaEspanol(DayOfWeek dayOfWeek) {
         return switch (dayOfWeek) {
             case MONDAY -> DiaSemana.LUNES;
@@ -292,6 +384,12 @@ public class SesionService implements SesionServiceInterface {
     }
 
     // Rechazar una sesion de adiestramiento
+    /**
+     * Rechaza una sesión solicitada por un cliente.
+     *
+     * @param idSesion identificador de la sesión
+     * @return DTO con la información de la sesión rechazada
+     */
     @Override
     public SesionResponseDto rechazarSesion(Long idSesion) {
         Sesion sesion = sesionRepository.findById(idSesion)
@@ -312,6 +410,12 @@ public class SesionService implements SesionServiceInterface {
     }
 
     // Obtener la lista de sesiones del cliente
+    /**
+     * Obtiene las sesiones programadas de un cliente.
+     *
+     * @param emailCliente email del cliente
+     * @return lista de sesiones en forma de DTO
+     */
     @Override
     public List<SesionClienteResponseDto> obtenerSesionesPorCliente(String emailCliente) {
         Cliente cliente = clienteRepository.findByEmail(emailCliente)
@@ -331,8 +435,4 @@ public class SesionService implements SesionServiceInterface {
             return dto;
         }).collect(Collectors.toList());
     }
-
-
-
-
 }

@@ -8,18 +8,36 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Servicio que gestiona las operaciones relacionadas con las soluciones disponibles en el sistema.
+ * Proporciona métodos CRUD para interactuar con el repositorio de soluciones.
+ *
+ * @author Noelia Vázquez Siles
+ */
 @Service
 public class SolucionService implements SolucionServiceInterface {
     @Autowired
     private SolucionRepository solucionRepository;
 
     // Encontrar todas las soluciones
+    /**
+     * Recupera todas las soluciones registradas en la base de datos.
+     *
+     * @return lista de todas las soluciones
+     */
     @Override
     public List<Solucion> findAll() {
         return solucionRepository.findAll();
     }
 
     // Encontrar solucion por su id
+    /**
+     * Busca una solución específica por su identificador.
+     *
+     * @param id identificador de la solución
+     * @return solución encontrada
+     * @throws RuntimeException si no se encuentra ninguna solución con ese ID
+     */
     @Override
     public Solucion findById(Long id) {
         Optional<Solucion> solucion = solucionRepository.findById(id);
@@ -31,12 +49,24 @@ public class SolucionService implements SolucionServiceInterface {
     }
 
     // Guardar soluciones
+    /**
+     * Guarda una nueva solución o actualiza una existente en la base de datos.
+     *
+     * @param solucion objeto solución a guardar
+     * @return la solución guardada
+     */
     @Override
     public Solucion save(Solucion solucion) {
         return solucionRepository.save(solucion);
     }
 
     // Borrar solucion por su id
+    /**
+     * Borra una solución de la base de datos por su identificador.
+     *
+     * @param id identificador de la solución a eliminar
+     * @throws RuntimeException si no se encuentra la solución con el ID dado
+     */
     @Override
     public void deleteById(Long id) {
         if (solucionRepository.existsById(id)) {
@@ -47,6 +77,14 @@ public class SolucionService implements SolucionServiceInterface {
     }
 
     // Actualizar una solución
+    /**
+     * Actualiza los datos de una solución existente.
+     *
+     * @param id identificador de la solución a actualizar
+     * @param solucion objeto con los nuevos datos de la solución
+     * @return solución actualizada
+     * @throws RuntimeException si no se encuentra la solución con el ID proporcionado
+     */
     public Solucion updateSolucion(Long id, Solucion solucion) {
         if (solucionRepository.existsById(id)) {
             solucion.setIdSolucion(id);  // Aseguramos que el ID es el mismo

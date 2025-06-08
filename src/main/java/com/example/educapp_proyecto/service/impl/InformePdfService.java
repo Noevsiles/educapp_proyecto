@@ -19,7 +19,13 @@ import com.itextpdf.io.font.PdfEncodings;
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
-
+/**
+ * Servicio encargado de generar informes PDF con los datos
+ * del cliente, perro, problemas de conducta, causas, soluciones y planes de trabajo.
+ * Utiliza la librería iText para la creación de documentos PDF.
+ *
+ * @author Noelia Vázquez Siles
+ */
 @Service
 @RequiredArgsConstructor
 public class InformePdfService {
@@ -33,6 +39,14 @@ public class InformePdfService {
 
 
     // Generar un informe por perro a través de su id
+    /**
+     * Genera un informe PDF con todos los detalles relevantes sobre el perro, sus problemas de conducta,
+     * causas, soluciones aplicadas y planes de trabajo asignados.
+     *
+     * @param idPerro ID del perro para el cual se generará el informe.
+     * @return Un array de bytes que representa el documento PDF generado.
+     * @throws Exception si ocurre un error durante la generación del documento.
+     */
     public byte[] generarInformePorPerro(Long idPerro) throws Exception {
         var perro = perroRepository.findById(idPerro)
                 .orElseThrow(() -> new RuntimeException("Perro no encontrado"));

@@ -30,7 +30,7 @@ public class ProblemaDeConductaController {
     /**
      * Crea un nuevo problema de conducta.
      *
-     * @param problemaDeConducta Objeto {@link ProblemaDeConducta} con los datos del nuevo problema.
+     * @param problemaDeConducta Objeto {ProblemaDeConducta} con los datos del nuevo problema.
      * @return Problema creado con estado HTTP 201.
      */
     // Crear un problema de conducta
@@ -43,7 +43,7 @@ public class ProblemaDeConductaController {
     /**
      * Obtiene todos los problemas de conducta, mostrando solo ID y nombre.
      *
-     * @return Lista de problemas en formato {@link ProblemaConductaDto}.
+     * @return Lista de problemas en formato {ProblemaConductaDto}.
      */
     // Obtener todos los problemas de conducta
     @GetMapping

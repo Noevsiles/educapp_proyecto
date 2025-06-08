@@ -14,6 +14,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Servicio que gestiona la disponibilidad semanal de los educadores.
+ * Permite crear, actualizar, eliminar y obtener disponibilidades asociadas a un educador.
+ *
+ * @author Noelia Vázquez Siles
+ */
 @Service
 public class DisponibilidadService implements DisponibilidadServiceInterface {
 
@@ -24,6 +30,12 @@ public class DisponibilidadService implements DisponibilidadServiceInterface {
     private EducadorRepository educadorRepository;
 
     // Guardar disponibilidad
+    /**
+     * Guarda una nueva disponibilidad para el educador autenticado.
+     *
+     * @param dto datos de disponibilidad a guardar.
+     * @param email email del educador autenticado.
+     */
     @Override
     public void guardarDisponibilidad(DisponibilidadRequestDto dto, String email) {
         Educador educador = educadorRepository.findByEmail(email)
@@ -39,6 +51,13 @@ public class DisponibilidadService implements DisponibilidadServiceInterface {
     }
 
     // Actualizar disponibilidad
+    /**
+     * Actualiza una disponibilidad existente por su ID.
+     *
+     * @param id ID de la disponibilidad a actualizar.
+     * @param dto nuevos datos de disponibilidad.
+     * @param email email del educador autenticado.
+     */
     @Override
     public void actualizar(Long id, DisponibilidadRequestDto dto, String email) {
         Disponibilidad disponibilidad = disponibilidadRepository.findById(id)
@@ -55,14 +74,24 @@ public class DisponibilidadService implements DisponibilidadServiceInterface {
         disponibilidadRepository.save(disponibilidad);
     }
 
-
     // Eliminar una disponibilidad por su id
+    /**
+     * Elimina una disponibilidad por su ID.
+     *
+     * @param id ID de la disponibilidad a eliminar.
+     */
     @Override
     public void eliminarPorId(Long id) {
         disponibilidadRepository.deleteById(id);
     }
 
     // Obtener el educador por su email
+    /**
+     * Obtiene todas las disponibilidades de un educador a partir de su ID.
+     *
+     * @param educadorId ID del educador.
+     * @return lista de disponibilidades como DTOs.
+     */
     @Override
     public List<DisponibilidadResponseDto> obtenerPorEducador(Long educadorId) {
         List<Disponibilidad> disponibilidad = disponibilidadRepository.findByEducador_IdEducador(educadorId);
@@ -76,8 +105,13 @@ public class DisponibilidadService implements DisponibilidadServiceInterface {
                 .collect(Collectors.toList());
     }
 
-
     // Obtener al educador a traves de su email (para autenticacion por token)
+    /**
+     * Obtiene todas las disponibilidades del educador autenticado por su email.
+     *
+     * @param email email del educador.
+     * @return lista de disponibilidades como DTOs.
+     */
     @Override
     public List<DisponibilidadResponseDto> obtenerPorEmailEducador(String email) {
         Educador educador = educadorRepository.findByEmail(email)

@@ -9,17 +9,33 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Servicio para interactuar con la API externa dog.ceo.
+ * Permite obtener razas de perros y sus imágenes asociadas.
+ *
+ * @author Noelia Vázquez Siles
+ */
 @Service
 public class BreedService implements BreedServiceInterface {
 
     private final RestTemplate restTemplate;
 
+    /**
+     * Constructor que inyecta el RestTemplate para realizar llamadas HTTP.
+     *
+     * @param restTemplate instancia de RestTemplate.
+     */
     @Autowired
     public BreedService(RestTemplate restTemplate){
         this.restTemplate = restTemplate;
     }
 
     // Obtener todas las razas de la api dog.ceo
+    /**
+     * Obtiene todas las razas de perros desde la API dog.ceo.
+     *
+     * @return lista de todas las razas formateadas.
+     */
     @Override
     public List<String> getAllBreeds() {
         String url = "https://dog.ceo/api/breeds/list/all";
@@ -41,6 +57,12 @@ public class BreedService implements BreedServiceInterface {
     }
 
     // Obtener todas las imagenes asociadas a las razas de dog.ceo
+    /**
+     * Obtiene una lista de URLs de imágenes de una raza de perro específica.
+     *
+     * @param breedName nombre de la raza.
+     * @return lista de URLs de imágenes asociadas a la raza.
+     */
     @Override
     public List<String> getBreedImages(String breedName) {
         // manejar subrazas si vienen en formato "sub breed"
