@@ -78,7 +78,7 @@ public class InformePdfService {
         // Problemas de conducta
         var problemas = perro.getProblemasDeConducta();
         if (problemas != null && !problemas.isEmpty()) {
-            document.add(new Paragraph("🐶 Problemas de Conducta").setBold().setFontSize(14));
+            document.add(new Paragraph("Problemas de Conducta").setBold().setFontSize(14));
             for (var problema : problemas) {
                 document.add(new Paragraph(" - " + problema.getNombre()).setBold());
                 document.add(new Paragraph("Descripción: " + problema.getDescripcion()).setBold());
